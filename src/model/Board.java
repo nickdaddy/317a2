@@ -11,6 +11,8 @@ public class Board {
 	/** This is the actual board grid */
 	public int grid[][];
 	
+	/** size of the board**/
+	private int size = 5;
 	/** This is the list of units on the board currently */
 	public List<Unit> units;
 	
@@ -23,8 +25,31 @@ public class Board {
 	}
 
 	/** Spawns all the units for the game and places them on the grid */
-	private void spawnUnits() {}
+	private void spawnUnits() {
+		
+		
+		/** Spawn King**/
+		King king = new King();
+		units.add(king);
+		
+		/** Spawn Guards**/
+		for (int i = 1; i<4; i++){
+			Gaurd gaurd = new Gaurd(1, i);
+			units.add(gaurd);
+		}
+		
+		/** Spawn Dragons**/
+		for (int i = 0;i<5; i++){
+			Dragon dragon = new Dragon(0,i);
+			units.add(dragon);
+		}
+		
+		
+		
+	}
 
 	/** Creates the grid for which the units will be placed on */
-	private void createGrid() {}
+	private void createGrid() {
+		grid = new int[size][size];
+	}
 }
