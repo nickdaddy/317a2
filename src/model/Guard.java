@@ -1,5 +1,6 @@
 package model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /** The guard class*/
@@ -14,8 +15,13 @@ public class Guard extends Unit {
 	
 	
 	public List<Move> PossibleMoves() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Move> moves = new LinkedList<Move>();
+		
+		moves.add(new Move(this, x, y + 1));
+		moves.add(new Move(this, x, y - 1));
+		moves.add(new Move(this, x + 1, y));
+		moves.add(new Move(this, x - 1, y));
+		return moves;
 	}
 	
 	/**
