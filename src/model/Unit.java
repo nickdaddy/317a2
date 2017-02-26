@@ -14,6 +14,9 @@ public abstract class Unit {
 	/** The type of the unit */
 	public UnitType type;
 	
+	/** The flag deciding whether the unit can be captured or not */
+	public boolean canBeCaptured = false;
+	
 	/**
 	 * The list of possible moves the piece can make at the current time
 	 * @return A list containing all the possible moves the piece can make
@@ -39,4 +42,6 @@ public abstract class Unit {
 	 * @return Whether the move was valid or not
 	 */
 	public abstract boolean isValidMove(Move move);
+	
+	public abstract boolean isSurrounded();
 }

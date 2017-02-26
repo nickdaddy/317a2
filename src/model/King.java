@@ -71,8 +71,14 @@ public class King extends Unit{
 		if (move.x < 0 || 4 < move.x || move.y < 0 || 4 <  move.y)
 			return false;
 		
-		if(Board.getInstance().grid[move.x][move.y] == 'O'){
+		if(Board.getInstance().grid[move.x][move.y] == Board.getInstance().emptyChar){
 			return true;
+		} else if (Board.getInstance().grid[move.x][move.y] == 'D'){
+			for(Unit unit : Board.getInstance().units){
+				if(move.x == unit.x && move.y == unit.y){
+					return unit.canBeCaptured;
+				}
+			}
 		}
 		
 		return false;
@@ -92,6 +98,40 @@ public class King extends Unit{
 		
 		return (Board.getInstance().grid[x][y] == 'G');
 	}
+	
+	@Override
+	public boolean isSurrounded(){
+		
+		int dragonCount = 0;
+		
+		if(Board.getInstance().inBounds(x, y + 1)){
+			if(Board.getInstance().grid[x][y + 1] == 'D'){
+				dragonCount++;
+			}
+		}
+
+		if(Board.getInstance().inBounds(x, y - 1)){
+			if(Board.getInstance().grid[x][y - 1] == 'D'){
+				dragonCount++;
+			}
+		}
+
+		if(Board.getInstance().inBounds(x + 1, y)){
+			if(Board.getInstance().grid[x + 1][y] == 'D'){
+				dragonCount++;
+			}
+		}
+		
+		if(Board.getInstance().inBounds(x - 1, y)){
+			if(Board.getInstance().grid[x - 1][y] == 'D'){
+				dragonCount++;
+			}
+		}
+			
+		return 3 < dragonCount;
+	}
+	
+	
 	
 	@Override
 	public String toString(){

@@ -46,11 +46,17 @@ public class Guard extends Unit {
 	@Override
 	public boolean isValidMove(Move move) {
 		
-		if (move.x < 0 || 4 < move.x || move.y < 0 || 4 <  move.y)
+		if (move.x < 0 || Board.getInstance().getSize() < move.x || move.y < 0 || Board.getInstance().getSize() <  move.y)
 			return false;
 		
-		if(Board.getInstance().grid[move.x][move.y] == 'O'){
+		if(Board.getInstance().grid[move.x][move.y] == Board.getInstance().emptyChar){
 			return true;
+		} else if (Board.getInstance().grid[move.x][move.y] == 'D'){
+			for(Unit unit : Board.getInstance().units){
+				if(move.x == unit.x && move.y == unit.y){
+					return unit.canBeCaptured;
+				}
+			}
 		}
 		
 		return false;
@@ -61,4 +67,35 @@ public class Guard extends Unit {
 		return "Guard";
 	}
 	
+	@Override
+	public boolean isSurrounded(){
+		
+		int dragonCount = 0;
+		
+		if(Board.getInstance().inBounds(x, y + 1)){
+			if(Board.getInstance().grid[x][y + 1] == 'D'){
+				dragonCount++;
+			}
+		}
+
+		if(Board.getInstance().inBounds(x, y - 1)){
+			if(Board.getInstance().grid[x][y - 1] == 'D'){
+				dragonCount++;
+			}
+		}
+
+		if(Board.getInstance().inBounds(x + 1, y)){
+			if(Board.getInstance().grid[x + 1][y] == 'D'){
+				dragonCount++;
+			}
+		}
+		
+		if(Board.getInstance().inBounds(x - 1, y)){
+			if(Board.getInstance().grid[x - 1][y] == 'D'){
+				dragonCount++;
+			}
+		}
+			
+		return 2 < dragonCount;
+	}
 }

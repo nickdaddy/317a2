@@ -1,10 +1,12 @@
 package controller;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
 import model.*;
+import model.Unit.UnitType;
 
 /**
  * The controller singleton runs the game. It contains all the operations for manipulating
@@ -24,9 +26,14 @@ public class Controller {
 	 * @param move The move to perform
 	 * @return Whether the move succeeded or not
 	 */
-	public boolean Move(Move move){ 
+	public boolean Move(Move move){
+		System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
+				" moved to " + convertToChar(move.x) + (move.y + 1));
+		
 		move.toMove.x = move.x;
 		move.toMove.y = move.y;
+		
+		
 		return true;
 	}
 	
@@ -36,8 +43,6 @@ public class Controller {
 	public void StartGame(){
 		board = Board.getInstance();
 		kingsTurn = false;
-		UpdateBoard();
-		DisplayBoard();
 		CurrentTurn();
 	}
 	
@@ -50,12 +55,23 @@ public class Controller {
 		
 		while(!gameOver){
 			
+			UpdateBoard();
+			DisplayBoard();
+			
 			possibleMoves = allPossibleMoves();
+			
+			boolean kingCanMove = false;
 			
 			for(Move move : possibleMoves){
 				System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
 						" can move to: " + convertToChar(move.x) + (move.y + 1));
-			 }
+				if(move.toMove.type == UnitType.KING){
+					kingCanMove = true;
+				}
+			}
+			
+			if(!kingCanMove)
+				EndGame();
 			
 			String command = scanner.nextLine();
 			
@@ -64,24 +80,22 @@ public class Controller {
 			int endX = convertToNum(command.charAt(2));
 			int endY = convertToNum(command.charAt(3));
 			
-			System.out.println("Input X: " + startX + " Input Y: " + startY);
-			
 			for (Move move: possibleMoves){
-				if(endX == move.x && endY == move.y){
+				if( startX == move.toMove.x && startY == move.toMove.y && endX == move.x && endY == move.y){
 					Move(move);
 					break;
 				}
 			}
-			
-			
-			
-			UpdateBoard();
-			DisplayBoard();
-			
 		}
 		
 		scanner.close();
 		
+	}
+	
+	private void UpdateFlags(){
+		for(Unit unit : board.units){
+			unit.canBeCaptured = unit.isSurrounded();
+		}
 	}
 	
 	private List<Move> allPossibleMoves(){
@@ -115,6 +129,21 @@ public class Controller {
 		case('e'):
 			num = 4;
 			break;
+		case('A'):
+			num = 0;
+			break;
+		case('B'):
+			num = 1;
+			break;
+		case('C'):
+			num = 2;
+			break;
+		case('D'):
+			num = 3;
+			break;
+		case('E'):
+			num = 4;
+			break;
 		case('1'):
 			num = 0;
 			break;
@@ -136,7 +165,7 @@ public class Controller {
 	}
 	
 	private char convertToChar(int toConvert){
-		char character = 'O';
+		char character = board.getInstance().emptyChar;
 		
 		switch(toConvert){
 		case(0):
@@ -165,14 +194,45 @@ public class Controller {
 	public void EndGame(){}
 	
 	public void UpdateBoard(){
+		DrawBoard();
+		UpdateFlags();
 		
-		for(int x = 0; x < board.getSize(); x++){
-			for(int y = 0; y < board.getSize(); y++){
-				board.grid[x][y] = 'O';
+		List<Unit> capturables = new LinkedList<Unit>();
+		
+		for (Unit unit : board.units){
+			if(unit.canBeCaptured && unit.type == UnitType.GUARD){
+				capturables.add(unit);
+			} else if(unit.canBeCaptured && unit.type == UnitType.DRAGON){
+				for (Unit guard : board.units){
+					if(guard.type == UnitType.GUARD || guard.type == UnitType.KING){
+						if(guard.x == unit.x && guard.y == unit.y){
+							capturables.add(unit);
+						}
+					}
+				}
 			}
 		}
 		
-		for(Unit unit : board.units){
+		for (Unit unit : capturables){
+			if(unit.type == UnitType.GUARD){
+				board.units.remove(unit);
+				board.units.add(new Dragon(unit.x, unit.y));
+			} else if(unit.type == UnitType.DRAGON){
+				board.units.remove(unit);
+			}
+		}
+		
+		DrawBoard();
+	}
+	
+	public void DrawBoard(){
+		for(int x = 0; x < board.getSize(); x++){
+			for(int y = 0; y < board.getSize(); y++){
+				board.grid[x][y] = board.getInstance().emptyChar;
+			}
+		}
+		
+		for (Unit unit : board.units){
 			switch(unit.type){
 			case DRAGON:
 				board.grid[unit.x][unit.y] = 'D';

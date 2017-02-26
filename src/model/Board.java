@@ -15,6 +15,8 @@ public class Board {
 	/** This is the actual board grid */
 	public char grid[][];
 	
+	public final char emptyChar = '*';
+	
 	/** size of the board**/
 	private int size = 5;
 
@@ -35,6 +37,10 @@ public class Board {
 		}
 		
 		return instance;
+	}
+	
+	public boolean inBounds(int x, int y){
+		return !(x < 0 || getSize() - 1 < x || y < 0 || getSize() - 1 < y);
 	}
 
 	/** Spawns all the units for the game and places them on the grid */
@@ -73,7 +79,7 @@ public class Board {
 		
 		for(int x = 0; x < size; x++){
 			for(int y = 0; y < size; y++){
-				grid[x][y] = 'O';
+				grid[x][y] = emptyChar;
 			}
 		}
 	}
