@@ -87,4 +87,9 @@ public class Board {
 	public int getSize() {
 		return size;
 	}
+	
+	/** For testing**/
+	public static void main(){
+		
+	}
 }

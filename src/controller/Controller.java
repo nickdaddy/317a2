@@ -27,6 +27,16 @@ public class Controller {
 	 * @return Whether the move succeeded or not
 	 */
 	public boolean Move(Move move){
+		
+		if ((move.toMove.type == UnitType.GUARD || move.toMove.type == UnitType.KING) && !kingsTurn){
+			System.out.println("Silly King its not your turn");
+			return false;
+		}
+		else if((move.toMove.type == UnitType.DRAGON) && kingsTurn){
+			System.out.println("Silly Dragon its not your turn");
+			return false;
+
+		}
 		System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
 				" moved to " + convertToChar(move.x) + (move.y + 1));
 		
@@ -45,6 +55,8 @@ public class Controller {
 		kingsTurn = false;
 		CurrentTurn();
 	}
+	
+	
 	
 	public void CurrentTurn(){
 		Scanner scanner = new Scanner(System.in);
@@ -82,8 +94,11 @@ public class Controller {
 			
 			for (Move move: possibleMoves){
 				if( startX == move.toMove.x && startY == move.toMove.y && endX == move.x && endY == move.y){
-					Move(move);
+					if (Move(move)){
+						kingsTurn = !kingsTurn;
+					}
 					break;
+					
 				}
 			}
 		}
