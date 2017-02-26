@@ -9,6 +9,9 @@ import java.util.List;
  */
 public class Board {
 
+	/** The singleton instance of the board */
+	private static Board instance = null;
+	
 	/** This is the actual board grid */
 	public char grid[][];
 	
@@ -21,9 +24,17 @@ public class Board {
 	/**
 	 * Creates a new board for the game to be played on
 	 */
-	public Board(){
+	protected Board(){
 		createGrid();
 		spawnUnits();
+	}
+	
+	public static Board getInstance(){
+		if(instance == null){
+			instance = new Board();
+		}
+		
+		return instance;
 	}
 
 	/** Spawns all the units for the game and places them on the grid */
@@ -49,6 +60,11 @@ public class Board {
 		
 		
 		
+	}
+	
+	public void recreateBoard(){
+		createGrid();
+		spawnUnits();
 	}
 
 	/** Creates the grid for which the units will be placed on */

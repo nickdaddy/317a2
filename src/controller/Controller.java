@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 import model.*;
@@ -32,7 +34,7 @@ public class Controller {
 	 * Starts the game by creating a new board and deciding which team goes first.
 	 */
 	public void StartGame(){
-		board = new Board();
+		board = Board.getInstance();
 		kingsTurn = false;
 		UpdateBoard();
 		DisplayBoard();
@@ -44,7 +46,17 @@ public class Controller {
 		
 		boolean gameOver = false;
 		
+		List<Move> possibleMoves = new LinkedList<Move>();
+		
 		while(!gameOver){
+			
+			possibleMoves = allPossibleMoves();
+			
+			for(Move move : possibleMoves){
+				System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
+						" can move to: " + convertToChar(move.x) + (move.y + 1));
+			 }
+			
 			String command = scanner.nextLine();
 			
 			int startX = convertToNum(command.charAt(0));
@@ -54,24 +66,13 @@ public class Controller {
 			
 			System.out.println("Input X: " + startX + " Input Y: " + startY);
 			
-			for (Unit unit : board.units){
-				
-				System.out.println("Unit X: " + unit.x + " Unit Y: " + unit.y);
-				
-				//If we find the unit we're telling to move
-				if(startX == unit.x && startY == unit.y){
-					if(unit.PossibleMoves() != null){
-						for(Move move : unit.PossibleMoves()){
-							System.out.println("Move X: " + move.x + " Move Y: " + move.y);
-							 //If the requested move is possible
-							 if(endX == move.x && endY == move.y){
-								 
-								 Move(move);
-							 }
-						 }
-					}
+			for (Move move: possibleMoves){
+				if(endX == move.x && endY == move.y){
+					Move(move);
+					break;
 				}
 			}
+			
 			
 			
 			UpdateBoard();
@@ -81,6 +82,18 @@ public class Controller {
 		
 		scanner.close();
 		
+	}
+	
+	private List<Move> allPossibleMoves(){
+		List<Move> moves = new LinkedList<Move>();
+		
+		for (Unit unit : board.units){
+			if(unit.PossibleMoves() != null){
+				moves.addAll(unit.PossibleMoves());
+			}
+		}
+		
+		return moves;
 	}
 	
 	private int convertToNum(char toConvert){
@@ -120,6 +133,30 @@ public class Controller {
 		}
 		
 		return num;
+	}
+	
+	private char convertToChar(int toConvert){
+		char character = 'O';
+		
+		switch(toConvert){
+		case(0):
+			character = 'A';
+			break;
+		case(1):
+			character = 'B';
+			break;
+		case(2):
+			character = 'C';
+			break;
+		case(3):
+			character = 'D';
+			break;
+		case(4):
+			character = 'E';
+			break;
+		}
+		
+		return character;
 	}
 	
 	/**

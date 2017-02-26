@@ -25,4 +25,8 @@ public class Dragon extends Unit {
 	@Override
 	public boolean isValidMove(Move move){ return false; }
 
+	@Override
+	public String toString(){
+		return "Dragon";
+	}
 }
