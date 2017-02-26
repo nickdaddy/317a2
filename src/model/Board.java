@@ -1,5 +1,6 @@
 package model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -9,10 +10,11 @@ import java.util.List;
 public class Board {
 
 	/** This is the actual board grid */
-	public int grid[][];
+	public char grid[][];
 	
 	/** size of the board**/
 	private int size = 5;
+
 	/** This is the list of units on the board currently */
 	public List<Unit> units;
 	
@@ -27,6 +29,7 @@ public class Board {
 	/** Spawns all the units for the game and places them on the grid */
 	private void spawnUnits() {
 		
+		units = new LinkedList<Unit>();
 		
 		/** Spawn King**/
 		King king = new King();
@@ -34,13 +37,13 @@ public class Board {
 		
 		/** Spawn Guards**/
 		for (int i = 1; i<4; i++){
-			Gaurd gaurd = new Gaurd(1, i);
-			units.add(gaurd);
+			Guard guard = new Guard(1, i);
+			units.add(guard);
 		}
 		
 		/** Spawn Dragons**/
 		for (int i = 0;i<5; i++){
-			Dragon dragon = new Dragon(0,i);
+			Dragon dragon = new Dragon(4,i);
 			units.add(dragon);
 		}
 		
@@ -50,6 +53,16 @@ public class Board {
 
 	/** Creates the grid for which the units will be placed on */
 	private void createGrid() {
-		grid = new int[size][size];
+		grid = new char[size][size];
+		
+		for(int x = 0; x < size; x++){
+			for(int y = 0; y < size; y++){
+				grid[x][y] = 'O';
+			}
+		}
+	}
+	
+	public int getSize() {
+		return size;
 	}
 }

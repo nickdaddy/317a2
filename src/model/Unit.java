@@ -32,4 +32,11 @@ public abstract class Unit {
 		/** The dragon piece */
 		DRAGON
 	}
+	
+	/**
+	 * This takes a move and returns whether the move is valid or not.
+	 * @param move The move to decide is valid or not
+	 * @return Whether the move was valid or not
+	 */
+	public abstract boolean isValidMove(Move move);
 }

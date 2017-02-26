@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.Scanner;
+
 import model.*;
 
 /**
@@ -22,10 +24,51 @@ public class Controller {
 	/**
 	 * Starts the game by creating a new board and deciding which team goes first.
 	 */
-	public void StartGame(){}
+	public void StartGame(){
+		board = new Board();
+		UpdateBoardUnits();
+		DisplayBoard();
+	}
+	
+	public void CurrentTurn(){
+
+	}
 	
 	/**
 	 * Ends the game by announcing the winner and starting a new game.
 	 */
 	public void EndGame(){}
+	
+	public void UpdateBoardUnits(){
+		for(Unit unit : board.units){
+			switch(unit.type){
+			case DRAGON:
+				board.grid[unit.x][unit.y] = 'D';
+				break;
+			case GUARD:
+				board.grid[unit.x][unit.y] = 'G';
+				break;
+			case KING:
+				board.grid[unit.x][unit.y] = 'K';
+				break;
+			default:
+				break;
+			
+			}
+		}
+	}
+	
+	public void DisplayBoard(){
+		for(int x = 0; x < board.getSize(); x++){
+			for(int y = 0; y < board.getSize(); y++){
+				System.out.print(board.grid[x][y]);
+			}
+			System.out.print("\n");
+		}
+	}
+	
+	
+	public static void main(String[] args){
+		new Controller().StartGame();
+	}
 }
