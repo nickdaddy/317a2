@@ -240,7 +240,7 @@ public class Controller {
 			}
 		}
 		
-		DrawBoard();
+		// Why do we draw board twice????DrawBoard();
 		System.out.println("Score of this board is: "+EvaluateBoard(board));
 	}
 	
