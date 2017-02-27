@@ -108,7 +108,7 @@ public class Dragon extends Unit {
 		}
 		
 		if(Board.getInstance().inBounds(x, y)){
-			if(Board.getInstance().grid[x - 1][y] == 'G' || Board.getInstance().grid[x - 1][y] == 'K'){
+			if(Board.getInstance().grid[x][y] == 'G' || Board.getInstance().grid[x][y] == 'K'){
 				guardCount++;
 			}
 		}

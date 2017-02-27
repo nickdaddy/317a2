@@ -221,7 +221,7 @@ public class Controller {
 			if(unit.canBeCaptured && unit.type == UnitType.GUARD){
 				capturables.add(unit);
 			} else if(unit.canBeCaptured && unit.type == UnitType.DRAGON){
-				for (Unit guard : board.units){
+			for (Unit guard : board.units){
 					if(guard.type == UnitType.GUARD || guard.type == UnitType.KING){
 						if(guard.x == unit.x && guard.y == unit.y){
 							capturables.add(unit);
@@ -254,7 +254,8 @@ public class Controller {
 		for (Unit unit : board.units){
 			switch(unit.type){
 			case DRAGON:
-				board.grid[unit.x][unit.y] = 'D';
+				/** to prevent gaurds being overwritten by dragons**/
+				if (board.grid[unit.x][unit.y] != 'G' && board.grid[unit.x][unit.y]!= 'K')board.grid[unit.x][unit.y] = 'D';
 				break;
 			case GUARD:
 				board.grid[unit.x][unit.y] = 'G';
