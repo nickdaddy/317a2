@@ -60,7 +60,7 @@ public class Board {
 		
 		/** Spawn Dragons**/
 		for (int i = 0;i<5; i++){
-			Dragon dragon = new Dragon(4,i);
+			Dragon dragon = new Dragon(3,i);
 			units.add(dragon);
 		}
 		

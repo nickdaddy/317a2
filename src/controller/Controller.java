@@ -241,6 +241,7 @@ public class Controller {
 		}
 		
 		DrawBoard();
+		System.out.println("Score of this board is: "+EvaluateBoard(board));
 	}
 	
 	public void DrawBoard(){
@@ -281,7 +282,7 @@ public class Controller {
 	
 	
 	
-	public void CheckAdjacent(Unit unit, Board board){
+	public int CheckAdjacent(Unit unit, Board board){
 		int adjacentscore = 0;
 		
 		if (unit.type == UnitType.GUARD || unit.type == UnitType.KING){
@@ -292,7 +293,7 @@ public class Controller {
 				else if(other.type == UnitType.GUARD || other.type == UnitType.KING){
 					/** At this point im not sure if only horizontal checks are required. Is it even good to have a vertical check in the game? Maybe just for the king?**/
 					/**Horizontal check**/
-					if ((other.x == unit.x-1 && other.y == unit.y)|| (other.x == unit.x+1 && other.y == unit.y)){
+					if ((other.y == unit.y-1 && other.x == unit.x)|| (other.y == unit.y+1 && other.x == unit.x)){
 						adjacentscore++;
 					}
 				}
@@ -324,7 +325,7 @@ public class Controller {
 			}
 		}
 		
-		
+		return adjacentscore;
 	}
 	public int EvaluateBoard(Board board){
 		int score = 0;
@@ -344,6 +345,7 @@ public class Controller {
 					score-=c;
 					break;
 			}
+			score+=CheckAdjacent(unit, board);
 		}
 		return score;
 	}
