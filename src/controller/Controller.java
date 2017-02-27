@@ -280,7 +280,78 @@ public class Controller {
 	}
 	
 	
+	
+	public void CheckAdjacent(Unit unit, Board board){
+		int adjacentscore = 0;
+		
+		if (unit.type == UnitType.GUARD || unit.type == UnitType.KING){
+			for (Unit other:board.units){
+				if (unit == other){
+					continue;
+				}
+				else if(other.type == UnitType.GUARD || other.type == UnitType.KING){
+					/** At this point im not sure if only horizontal checks are required. Is it even good to have a vertical check in the game? Maybe just for the king?**/
+					/**Horizontal check**/
+					if ((other.x == unit.x-1 && other.y == unit.y)|| (other.x == unit.x+1 && other.y == unit.y)){
+						adjacentscore++;
+					}
+				}
+				/** close to a dragon**/
+				else{
+					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
+						adjacentscore--;
+					}
+				}	
+			}
+		}
+		/** is dragon**/
+		else{
+			for (Unit other:board.units){
+				if (unit == other){
+					continue;
+				}
+				else if(other.type == UnitType.DRAGON){
+					/** check all around including diagonal**/
+					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
+						adjacentscore--;
+					}
+				}
+				else{
+					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
+						adjacentscore++;
+					}
+				}
+			}
+		}
+		
+		
+	}
+	public int EvaluateBoard(Board board){
+		int score = 0;
+		int c = 2;
+		for(Unit unit: board.units){
+			switch(unit.type){
+				case GUARD:	
+					score+=c; 
+					
+					break;
+							
+				case KING: 
+					score+=c;
+					break;
+							
+				case DRAGON: 
+					score-=c;
+					break;
+			}
+		}
+		return score;
+	}
+	
+	
 	public static void main(String[] args){
 		new Controller().StartGame();
 	}
+	
+	
 }
