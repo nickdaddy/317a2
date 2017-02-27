@@ -24,10 +24,12 @@ public class Controller {
 	 * This will perform the given move and return true or false depending on whether it was successful or not
 	 * 
 	 * @param move The move to perform
+	 * @precondition move must be valid, not filled and piece moving must be on its turn
 	 * @return Whether the move succeeded or not
 	 */
 	public boolean Move(Move move){
 		
+		/**check for turn **/
 		if ((move.toMove.type == UnitType.GUARD || move.toMove.type == UnitType.KING) && !kingsTurn){
 			System.out.println("Silly King its not your turn");
 			return false;
@@ -37,6 +39,7 @@ public class Controller {
 			return false;
 
 		}
+		
 		System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
 				" moved to " + convertToChar(move.x) + (move.y + 1));
 		
