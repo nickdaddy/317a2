@@ -15,10 +15,9 @@ public class State {
 	 * @param board The board
 	 */
 	public State(Move move, Board board) {
-		super();
 		this.move = move;
-		move.toMove.x = move.x;
-		move.toMove.y = move.y;
+		//move.toMove.x = move.x;
+		//move.toMove.y = move.y;
 		this.board = board;
 		utility = board.EvaluateBoard();
 	}

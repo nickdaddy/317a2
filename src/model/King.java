@@ -5,9 +5,9 @@ import java.util.List;
 
 public class King extends Unit{
 
-	public King(Board gameBoard){
-		x = 0;
-		y = 2;
+	public King(int xPos, int yPos, Board gameBoard){
+		x = xPos;
+		y = yPos;
 		type = UnitType.KING;
 		board = gameBoard;
 	}

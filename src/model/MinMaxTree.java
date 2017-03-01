@@ -8,7 +8,7 @@ import model.Unit.UnitType;
 
 public class MinMaxTree {
 
-	List<State> firstLevel;
+	public List<State> firstLevel;
 	
 	/**
 	 * Takes a state and generates it's children. If the given state is a winning state, returns an empty list.
@@ -47,16 +47,14 @@ public class MinMaxTree {
 		
 		List<State> children = new LinkedList<State>();
 		
-		List<Move> moves = board.allPossibleMoves();
-		
-		for( Move move : moves){
+		for( Move move : board.allPossibleMoves()){
 			if(board.kingsTurn && (move.toMove.type == UnitType.KING || move.toMove.type == UnitType.GUARD))
 				children.add(new State(move, board.deepCloneAndMove(move)));
 			
 			if(!board.kingsTurn && move.toMove.type == UnitType.DRAGON)
 				children.add(new State(move, board.deepCloneAndMove(move)));
 		}
-		
+	
 		return children;
 	}
 	
@@ -65,7 +63,7 @@ public class MinMaxTree {
 	 * @param board The board to create a tree for
 	 */
 	public MinMaxTree(Board board, int depth){
-		List<State> firstLevel = generateChildStates(board);
+		firstLevel = this.generateChildStates(board);
 		
 		System.out.println("Level 0 contains " + firstLevel.size() + " states.");
 		
@@ -94,6 +92,7 @@ public class MinMaxTree {
 		board.Initialize();
 		board.DisplayBoard();
 		
-		List<State> firstLevel = new MinMaxTree(board, 5).firstLevel;
+		List<State> firstLevel = new MinMaxTree(board, Controller.maxDepth).firstLevel;
+
 	}
 }

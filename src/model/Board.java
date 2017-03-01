@@ -39,6 +39,8 @@ public class Board {
 	 * 					 *
 	\********************/
 
+	public Board(){}
+	
 	/**
 	 * Creates a new board for the game to be played on
 	 */
@@ -61,7 +63,7 @@ public class Board {
 		for (Unit unit : this.units){
 			switch (unit.type) {
 			case KING:
-				cloneBoard.units.add(new King(cloneBoard));
+				cloneBoard.units.add(new King(unit.x, unit.y, cloneBoard));
 				break;
 			case GUARD:
 				cloneBoard.units.add(new Guard(unit.x, unit.y, cloneBoard));
@@ -93,22 +95,36 @@ public class Board {
 	 */
 	public Board deepCloneAndMove(Move move){
 		Board cloneBoard = new Board();
+		
+		cloneBoard.grid = new char[size][size];
+		
+		for(int x = 0; x < size; x++){
+			for(int y = 0; y < size; y++){
+				cloneBoard.grid[x][y] = emptyChar;
+			}
+		}
+		
+		UpdateBoard();
 		cloneBoard.kingsTurn = this.kingsTurn;
+		
 		cloneBoard.units = new LinkedList<Unit>();
+		
 		Unit cloned = null;
+		
 		//Deep clone the board units
 		for (Unit unit : this.units){
+			int x = unit.x;
+			int y = unit.y;
+			
 			switch (unit.type) {
 			case KING:
-				cloned = (new King(cloneBoard));
+				cloned = new King(x, y, cloneBoard);
 				break;
 			case GUARD:
-				cloned = (new Guard(unit.x, unit.y, cloneBoard));
+				cloned = new Guard(x, y, cloneBoard);
 				break;
 			case DRAGON:
-				cloned = (new Dragon(unit.x, unit.y, cloneBoard));
-				break;
-			default:
+				cloned = new Dragon(x, y, cloneBoard);
 				break;
 			}
 			
@@ -119,18 +135,7 @@ public class Board {
 				cloneBoard.Move(new Move(cloned, move.x, move.y));
 			}
 		}
-		
-		cloneBoard.grid = new char[size][size];
-		
-		for(int x = 0; x < size; x++){
-			for(int y = 0; y < size; y++){
-				cloneBoard.grid[x][y] = this.grid[x][y];
-			}
-		}
-		
-		
-		cloneBoard.UpdateBoard();
-		
+
 		return cloneBoard;
 	}
 	
@@ -177,6 +182,8 @@ public class Board {
 	
 	/** Displays the current state of the board */
 	public void DisplayBoard(){
+		
+		UpdateBoard();
 		System.out.print("\n");
 		
 		for(int x = 0; x < getSize(); x++){
@@ -188,6 +195,7 @@ public class Board {
 		
 		System.out.print("\n");
 	}
+	
 	/**
 	 * Gets the list of possible moves on the current board
 	 * @return The list of possible moves to be made
@@ -402,7 +410,7 @@ public class Board {
 		units = new LinkedList<Unit>();
 		
 		/** Spawn King**/
-		King king = new King(this);
+		King king = new King(0, 2, this);
 		units.add(king);
 		
 		/** Spawn Guards**/
