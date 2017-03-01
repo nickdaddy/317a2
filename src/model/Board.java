@@ -40,6 +40,12 @@ public class Board {
 		kingsTurn = false;
 	}
 	
+	/**
+	 * Checks if the given x and y coordinates are within the board size
+	 * @param x The x pos to check
+	 * @param y The y pos to check
+	 * @return Whether the x and y positions are within the board boundaries
+	 */
 	public boolean inBounds(int x, int y){
 		return !(x < 0 || getSize() - 1 < x || y < 0 || getSize() - 1 < y);
 	}
@@ -100,6 +106,52 @@ public class Board {
 		}
 		
 		cloneBoard.kingsTurn = this.kingsTurn;
+		
+		return cloneBoard;
+	}
+	
+	/**
+	 * Deep clones the board and applies the given move to the cloned board
+	 * @return A deep clone of this board
+	 */
+	public Board deepCloneAndMove(Move move){
+		Board cloneBoard = new Board();
+		cloneBoard.units = new LinkedList<Unit>();
+		Unit cloned = null;
+		//Deep clone the board units
+		for (Unit unit : this.units){
+			switch (unit.type) {
+			case KING:
+				cloned = (new King(cloneBoard));
+				break;
+			case GUARD:
+				cloned = (new Guard(unit.x, unit.y, cloneBoard));
+				break;
+			case DRAGON:
+				cloned = (new Dragon(unit.x, unit.y, cloneBoard));
+				break;
+			default:
+				break;
+			}
+			
+			cloneBoard.units.add(cloned);
+			
+			//If we just cloned the unit we are trying to move, apply the move to the newly cloned board
+			if(move.toMove == unit){
+				cloneBoard.Move(new Move(cloned, move.x, move.y));
+			}
+		}
+		
+		cloneBoard.grid = new char[size][size];
+		
+		for(int x = 0; x < size; x++){
+			for(int y = 0; y < size; y++){
+				cloneBoard.grid[x][y] = this.grid[x][y];
+			}
+		}
+		
+		cloneBoard.kingsTurn = this.kingsTurn;
+		cloneBoard.UpdateBoard();
 		
 		return cloneBoard;
 	}
@@ -201,7 +253,7 @@ public class Board {
 	public boolean isWinningState(){
 		for (Unit unit : units){
 			if(unit.type == UnitType.KING){
-				if(unit.y == 4){
+				if(unit.y == getSize() - 1){
 					return true;
 				} else if (unit.isSurrounded() && unit.PossibleMoves().size() == 0){
 					return true;
@@ -346,7 +398,8 @@ public class Board {
 	}
 	
 	/** For testing**/
-	public static void main(){
+	public static void main(String[] args){
+		Board board = new Board();
 		
 	}
 }

@@ -79,6 +79,9 @@ public class Controller {
 	 */
 	public void EndGame(){}
 	
+	/**
+	 * Displays the current state of the board.
+	 */
 	public void DisplayBoard(){
 		for(int x = 0; x < board.getSize(); x++){
 			
@@ -90,6 +93,10 @@ public class Controller {
 		}
 	}
 	
+	/**
+	 * Generates the MinMaxTree for the current state of the board
+	 * @param root The root state to generate the minmax from
+	 */
 	public void GenerateMinMaxTree(State root){
 		List<Move> moves = root.board.allPossibleMoves();
 		
