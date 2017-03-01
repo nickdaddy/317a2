@@ -38,18 +38,18 @@ public class Board {
 		units = new LinkedList<Unit>();
 		
 		/** Spawn King**/
-		King king = new King();
+		King king = new King(this);
 		units.add(king);
 		
 		/** Spawn Guards**/
 		for (int i = 1; i<4; i++){
-			Guard guard = new Guard(1, i);
+			Guard guard = new Guard(1, i, this);
 			units.add(guard);
 		}
 		
 		/** Spawn Dragons**/
 		for (int i = 0;i<5; i++){
-			Dragon dragon = new Dragon(3,i);
+			Dragon dragon = new Dragon(3, i, this);
 			units.add(dragon);
 		}
 		

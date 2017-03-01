@@ -5,10 +5,10 @@ import java.util.List;
 
 public class Dragon extends Unit {
 
-	public Dragon(int x, int y){
+	public Dragon(int x, int y, Board gameBoard){
 		this.x=x;
 		this.y=y;
-		
+		board = gameBoard;
 		type = UnitType.DRAGON;
 	}
 	

@@ -256,7 +256,7 @@ public class Controller {
 		for (Unit unit : capturables){
 			if(unit.type == UnitType.GUARD){
 				board.units.remove(unit);
-				board.units.add(new Dragon(unit.x, unit.y));
+				board.units.add(new Dragon(unit.x, unit.y, board));
 			} else if(unit.type == UnitType.DRAGON){
 				board.units.remove(unit);
 			}

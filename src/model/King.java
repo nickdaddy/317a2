@@ -5,10 +5,11 @@ import java.util.List;
 
 public class King extends Unit{
 
-	public King(){
+	public King(Board gameBoard){
 		x = 0;
 		y = 2;
 		type = UnitType.KING;
+		board = gameBoard;
 	}
 	
 	/**

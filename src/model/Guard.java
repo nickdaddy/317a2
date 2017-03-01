@@ -6,11 +6,11 @@ import java.util.List;
 /** The guard class*/
 public class Guard extends Unit {
 
-	public Guard(int x, int y){
+	public Guard(int x, int y, Board gameBoard){
 		this.x=x;
 		this.y=y;
 		type = UnitType.GUARD;
-		
+		board = gameBoard;
 	}
 	
 	/**
