@@ -306,7 +306,7 @@ public class Controller {
 	
 	
 	
-	public int CheckAdjacent(Unit unit, Board board){
+	public static int CheckAdjacent(Unit unit, Board board){
 		int adjacentscore = 0;
 		
 		if (unit.type == UnitType.GUARD || unit.type == UnitType.KING){
@@ -359,7 +359,7 @@ public class Controller {
 	 * @param board The board to evaluate
 	 * @return The utility of the board state itself
 	 */
-	public int EvaluateBoard(Board board){
+	public static int EvaluateBoard(Board board){
 		int score = 0;
 		int c = 2;
 		for(Unit unit: board.units){
@@ -383,14 +383,9 @@ public class Controller {
 	}
 	
 	
-	public void GenerateMinMaxTree(State root){
-		List<Move> moves = Controller.allPossibleMoves(root.board);
-		
-		
-		for(Move curMove : moves){
-			//root.childStates.add(new State(m));
-		}
-	}
+	
+	
+	
 	
 	
 	public static void main(String[] args){

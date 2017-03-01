@@ -3,12 +3,21 @@ package model;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.Unit.UnitType;
+
 public class King extends Unit{
 
 	public King(){
 		x = 0;
 		y = 2;
 		type = UnitType.KING;
+	}
+	
+	public King(int x, int y){
+		this.x=x;
+		this.y=y;
+		type = UnitType.KING;
+		
 	}
 	
 	/**

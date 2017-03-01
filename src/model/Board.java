@@ -26,10 +26,46 @@ public class Board {
 	/**
 	 * Creates a new board for the game to be played on
 	 */
-	protected Board(){
+	public Board(){
 		createGrid();
 		spawnUnits();
 	}
+	
+	
+	/** for copys of boards. Use Board board = new Board(oldboard)**/
+	public Board(Board board){
+		this.size = board.size;
+		units = new LinkedList<Unit>();
+		for(Unit element: board.units){
+			Unit newunit;
+			switch(element.type){
+			case GUARD:	
+				newunit = new Guard(element.x, element.y);
+				units.add(newunit);
+				break;
+						
+			case KING: 
+				newunit = new King(element.x, element.y);
+				units.add(newunit);
+				break;
+						
+			case DRAGON: 
+				newunit = new Dragon(element.x, element.y);
+				units.add(newunit);				
+				break;
+			}
+			
+			this.grid = new char[5][5];
+			for (int i =0; i<5 ; i++){
+				for (int j =0; j<5 ; j++){
+					grid[i][j] = board.grid[i][j];
+				}	
+			}
+		}
+		
+		
+	}
+	
 	
 	public static Board getInstance(){
 		if(instance == null){
