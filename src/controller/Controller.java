@@ -18,7 +18,7 @@ public class Controller {
 	public Board board;
 	
 	/** The maximum depth to explore in the tree */
-	public static int maxDepth = 4;
+	public static int maxDepth = 1;
 	
 	/**
 	 * Starts the game by creating a new board and deciding which team goes first.

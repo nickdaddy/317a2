@@ -100,11 +100,11 @@ public class Board {
 		
 		for(int x = 0; x < size; x++){
 			for(int y = 0; y < size; y++){
-				cloneBoard.grid[x][y] = emptyChar;
+				cloneBoard.grid[x][y] = this.grid[x][y];
 			}
 		}
 		
-		UpdateBoard();
+		
 		cloneBoard.kingsTurn = this.kingsTurn;
 		
 		cloneBoard.units = new LinkedList<Unit>();
@@ -136,6 +136,8 @@ public class Board {
 			}
 		}
 
+		cloneBoard.UpdateBoard();
+		
 		return cloneBoard;
 	}
 	
@@ -271,6 +273,7 @@ public class Board {
 		
 		move.toMove.x = move.x;
 		move.toMove.y = move.y;
+		
 		kingsTurn = !kingsTurn;
 		
 		return true;
@@ -442,7 +445,12 @@ public class Board {
 		Board board = new Board();
 		board.Initialize();
 		board.DisplayBoard();
-		Board cloned = board.deepCloneAndMove(new Move(board.units.get(5), 0, 0));
+		Board cloned = board.deepCloneAndMove(new Move(board.units.get(5), 2, 1));
 		cloned.DisplayBoard();
+		cloned = cloned.deepCloneAndMove(new Move(cloned.units.get(2), 2, 2));
+		cloned.DisplayBoard();
+		cloned = cloned.deepCloneAndMove(new Move(cloned.units.get(7), 2, 3));
+		cloned.DisplayBoard();
+		MinMaxTree swag = new MinMaxTree(cloned, 3);
 	}
 }

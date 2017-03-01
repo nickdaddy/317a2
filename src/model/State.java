@@ -16,8 +16,6 @@ public class State {
 	 */
 	public State(Move move, Board board) {
 		this.move = move;
-		//move.toMove.x = move.x;
-		//move.toMove.y = move.y;
 		this.board = board;
 		utility = board.EvaluateBoard();
 	}

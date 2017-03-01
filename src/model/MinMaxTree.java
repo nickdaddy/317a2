@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import model.Unit.UnitType;
 
 public class MinMaxTree {
 
+	public State root;
 	public List<State> firstLevel;
 	
 	/**
@@ -63,7 +65,12 @@ public class MinMaxTree {
 	 * @param board The board to create a tree for
 	 */
 	public MinMaxTree(Board board, int depth){
+		
+		root = new State(null, board);
+		
 		firstLevel = this.generateChildStates(board);
+		
+		root.childStates = firstLevel;
 		
 		System.out.println("Level 0 contains " + firstLevel.size() + " states.");
 		
@@ -76,6 +83,7 @@ public class MinMaxTree {
 			for (State curState : currentLevel){
 				curState.childStates = generateChildStates(curState, x);
 				nextLevel.addAll(curState.childStates);
+				curState.board.DisplayBoard();
 			}
 			
 			System.out.println("Level " + x + " contains " + nextLevel.size() + " states.");
@@ -86,13 +94,83 @@ public class MinMaxTree {
 		}
 	}
 	
+	public State EvaluateTree(boolean kingsturn){
+		
+		if (kingsturn){
+			//root.move = MaxValue(root).move;
+			//return MaxValue(root);
+			root = MaxValue(root);
+		}
+		else{
+			//root.move = MinValue(root).move;
+			
+			//return MinValue(root);
+			root = MinValue(root);
+		}
+		
+		for (State child: root.childStates){
+			if (root.utility == child.utility){
+				root.move = child.move;
+			}
+		}
+		return root;
+	}
+	
+	private State MaxValue(State st){
+		if (st.childStates == null){
+			return st;
+		}
+		
+		Iterator<State> iter = st.childStates.iterator();
+		int best = Integer.MIN_VALUE;
+
+		while(iter.hasNext()){
+			State curr = iter.next();
+			MinValue(curr);
+			if (curr.utility>best){
+				best = curr.utility;
+
+			}
+		}
+		
+		st.utility= best;
+		
+		return st;
+	}
+	
+	private State MinValue(State st){
+		if (st.childStates == null){
+			return st;
+		}
+		
+		Iterator<State> iter = st.childStates.iterator();
+		int best = Integer.MAX_VALUE;
+		while(iter.hasNext()){
+			State curr = iter.next();
+			MaxValue(curr);
+			if (curr.utility<best){
+				best = curr.utility;
+			}
+		}
+		st.utility= best;
+		
+		
+		return st;
+	}
+	
 	/** For testing**/
 	public static void main(String[] args){
 		Board board = new Board();
 		board.Initialize();
 		board.DisplayBoard();
 		
-		List<State> firstLevel = new MinMaxTree(board, Controller.maxDepth).firstLevel;
-
+		MinMaxTree tree = new MinMaxTree(board, Controller.maxDepth);
+		
+		State state = tree.EvaluateTree(board.kingsTurn);
+		System.out.println(state.utility);
+		
+		board.Move(state.move);
+		board.DisplayBoard();
+		
 	}
 }
