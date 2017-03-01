@@ -64,7 +64,7 @@ public class Dragon extends Unit {
 		if (move.x < 0 || 4 < move.x || move.y < 0 || 4 <  move.y)
 			return false;
 		
-		if(Board.getInstance().grid[move.x][move.y] == Board.getInstance().emptyChar){
+		if(board.grid[move.x][move.y] == board.emptyChar){
 			return true;
 		}
 		
@@ -83,32 +83,32 @@ public class Dragon extends Unit {
 		
 		int guardCount = 0;
 		
-		if(Board.getInstance().inBounds(x, y + 1)){
-			if(Board.getInstance().grid[x][y + 1] == 'G' || Board.getInstance().grid[x][y + 1] == 'K'){
+		if(board.inBounds(x, y + 1)){
+			if(board.grid[x][y + 1] == 'G' || board.grid[x][y + 1] == 'K'){
 				guardCount++;
 			}
 		}
 
-		if(Board.getInstance().inBounds(x, y - 1)){
-			if(Board.getInstance().grid[x][y - 1] == 'G' || Board.getInstance().grid[x][y - 1] == 'K'){
+		if(board.inBounds(x, y - 1)){
+			if(board.grid[x][y - 1] == 'G' || board.grid[x][y - 1] == 'K'){
 				guardCount++;
 			}
 		}
 
-		if(Board.getInstance().inBounds(x + 1, y)){
-			if(Board.getInstance().grid[x + 1][y] == 'G' || Board.getInstance().grid[x + 1][y] == 'K'){
+		if(board.inBounds(x + 1, y)){
+			if(board.grid[x + 1][y] == 'G' || board.grid[x + 1][y] == 'K'){
 				guardCount++;
 			}
 		}
 		
-		if(Board.getInstance().inBounds(x - 1, y)){
-			if(Board.getInstance().grid[x - 1][y] == 'G' || Board.getInstance().grid[x - 1][y] == 'K'){
+		if(board.inBounds(x - 1, y)){
+			if(board.grid[x - 1][y] == 'G' || board.grid[x - 1][y] == 'K'){
 				guardCount++;
 			}
 		}
 		
-		if(Board.getInstance().inBounds(x, y)){
-			if(Board.getInstance().grid[x][y] == 'G' || Board.getInstance().grid[x][y] == 'K'){
+		if(board.inBounds(x, y)){
+			if(board.grid[x][y] == 'G' || board.grid[x][y] == 'K'){
 				guardCount++;
 			}
 		}

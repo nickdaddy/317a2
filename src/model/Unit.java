@@ -14,6 +14,9 @@ public abstract class Unit {
 	/** The type of the unit */
 	public UnitType type;
 	
+	/** The board the unit is on */
+	public Board board;
+	
 	/** The flag deciding whether the unit can be captured or not */
 	public boolean canBeCaptured = false;
 	

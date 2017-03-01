@@ -57,7 +57,7 @@ public class Controller {
 	 * Starts the game by creating a new board and deciding which team goes first.
 	 */
 	public void StartGame(){
-		board = Board.getInstance();
+		board = new Board();
 		kingsTurn = false;
 		CurrentTurn();
 	}
@@ -205,7 +205,7 @@ public class Controller {
 	}
 	
 	private char convertToChar(int toConvert){
-		char character = board.getInstance().emptyChar;
+		char character = board.emptyChar;
 		
 		switch(toConvert){
 		case(0):
@@ -269,7 +269,7 @@ public class Controller {
 	public void DrawBoard(){
 		for(int x = 0; x < board.getSize(); x++){
 			for(int y = 0; y < board.getSize(); y++){
-				board.grid[x][y] = board.getInstance().emptyChar;
+				board.grid[x][y] = board.emptyChar;
 			}
 		}
 		

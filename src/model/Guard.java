@@ -46,13 +46,13 @@ public class Guard extends Unit {
 	@Override
 	public boolean isValidMove(Move move) {
 		
-		if (move.x < 0 || Board.getInstance().getSize() < move.x || move.y < 0 || Board.getInstance().getSize() <  move.y)
+		if (move.x < 0 || board.getSize() < move.x || move.y < 0 || board.getSize() <  move.y)
 			return false;
 		
-		if(Board.getInstance().grid[move.x][move.y] == Board.getInstance().emptyChar){
+		if(board.grid[move.x][move.y] == board.emptyChar){
 			return true;
-		} else if (Board.getInstance().grid[move.x][move.y] == 'D'){
-			for(Unit unit : Board.getInstance().units){
+		} else if (board.grid[move.x][move.y] == 'D'){
+			for(Unit unit : board.units){
 				if(move.x == unit.x && move.y == unit.y){
 					return unit.canBeCaptured;
 				}
@@ -72,26 +72,26 @@ public class Guard extends Unit {
 		
 		int dragonCount = 0;
 		
-		if(Board.getInstance().inBounds(x, y + 1)){
-			if(Board.getInstance().grid[x][y + 1] == 'D'){
+		if(board.inBounds(x, y + 1)){
+			if(board.grid[x][y + 1] == 'D'){
 				dragonCount++;
 			}
 		}
 
-		if(Board.getInstance().inBounds(x, y - 1)){
-			if(Board.getInstance().grid[x][y - 1] == 'D'){
+		if(board.inBounds(x, y - 1)){
+			if(board.grid[x][y - 1] == 'D'){
 				dragonCount++;
 			}
 		}
 
-		if(Board.getInstance().inBounds(x + 1, y)){
-			if(Board.getInstance().grid[x + 1][y] == 'D'){
+		if(board.inBounds(x + 1, y)){
+			if(board.grid[x + 1][y] == 'D'){
 				dragonCount++;
 			}
 		}
 		
-		if(Board.getInstance().inBounds(x - 1, y)){
-			if(Board.getInstance().grid[x - 1][y] == 'D'){
+		if(board.inBounds(x - 1, y)){
+			if(board.grid[x - 1][y] == 'D'){
 				dragonCount++;
 			}
 		}

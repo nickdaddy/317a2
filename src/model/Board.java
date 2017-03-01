@@ -8,9 +8,6 @@ import java.util.List;
  * as well as a 5x5 representation of the current state of the board.
  */
 public class Board {
-
-	/** The singleton instance of the board */
-	private static Board instance = null;
 	
 	/** This is the actual board grid */
 	public char grid[][];
@@ -26,17 +23,9 @@ public class Board {
 	/**
 	 * Creates a new board for the game to be played on
 	 */
-	protected Board(){
+	public Board(){
 		createGrid();
 		spawnUnits();
-	}
-	
-	public static Board getInstance(){
-		if(instance == null){
-			instance = new Board();
-		}
-		
-		return instance;
 	}
 	
 	public boolean inBounds(int x, int y){
