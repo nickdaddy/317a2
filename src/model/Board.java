@@ -294,6 +294,46 @@ public class Board {
 		return adjacentscore;
 	}
 	
+	/**
+	 * Updates the state of the board by updating the grid, updating the capture flags, and removing/adding units
+	 * where appropriate
+	 */
+	public void UpdateBoard(){
+		UpdateGrid();
+		UpdateFlags();
+		
+		List<Unit> capturables = new LinkedList<Unit>();
+		
+		for (Unit unit : units){
+			if(unit.canBeCaptured && unit.type == UnitType.GUARD){
+				capturables.add(unit);
+			} else if(unit.canBeCaptured && unit.type == UnitType.DRAGON){
+			for (Unit guard : units){
+					if(guard.type == UnitType.GUARD || guard.type == UnitType.KING){
+						if(guard.x == unit.x && guard.y == unit.y){
+							capturables.add(unit);
+						}
+					}
+				}
+			}
+		}
+		
+		for (Unit unit : capturables){
+			if(unit.type == UnitType.GUARD){
+				units.remove(unit);
+				units.add(new Dragon(unit.x, unit.y, this));
+			} else if(unit.type == UnitType.DRAGON){
+				units.remove(unit);
+			}
+		}
+		
+		//Updates the grid again to reflect any changes made by removing/adding units
+		UpdateGrid();
+		UpdateFlags();
+		
+		System.out.println("Score of this board is: "+ EvaluateBoard());
+	}
+	
 	/** Updates the capture flags of each unit */
 	public void UpdateFlags(){
 		for(Unit unit : units){

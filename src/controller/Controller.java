@@ -20,10 +20,6 @@ public class Controller {
 	/** The maximum depth to explore in the tree */
 	public static int maxDepth = 3;
 	
-	
-	
-	
-	
 	/**
 	 * Starts the game by creating a new board and deciding which team goes first.
 	 */
@@ -32,8 +28,6 @@ public class Controller {
 		board.Initialize();
 		CurrentTurn();
 	}
-	
-	
 	
 	public void CurrentTurn(){
 		Scanner scanner = new Scanner(System.in);
@@ -44,7 +38,7 @@ public class Controller {
 		
 		while(!gameOver){
 			
-			UpdateBoard();
+			board.UpdateBoard();
 			DisplayBoard();
 			
 			possibleMoves = board.allPossibleMoves();
@@ -80,11 +74,30 @@ public class Controller {
 		scanner.close();
 	}
 	
+	/**
+	 * Ends the game by announcing the winner and starting a new game.
+	 */
+	public void EndGame(){}
 	
+	public void DisplayBoard(){
+		for(int x = 0; x < board.getSize(); x++){
+			
+			
+			for(int y = 0; y < board.getSize(); y++){
+				System.out.print(board.grid[x][y]);
+			}
+			System.out.print("\n");
+		}
+	}
 	
-	
-	
-	
+	public void GenerateMinMaxTree(State root){
+		List<Move> moves = root.board.allPossibleMoves();
+		
+		
+		for(Move curMove : moves){
+			//root.childStates.add(new State(m));
+		}
+	}
 	
 	public static int convertToNum(char toConvert){
 		int num = -1;
@@ -163,71 +176,6 @@ public class Controller {
 		
 		return character;
 	}
-	
-	/**
-	 * Ends the game by announcing the winner and starting a new game.
-	 */
-	public void EndGame(){}
-	
-	public void UpdateBoard(){
-		board.UpdateGrid();
-		board.UpdateFlags();
-		
-		List<Unit> capturables = new LinkedList<Unit>();
-		
-		for (Unit unit : board.units){
-			if(unit.canBeCaptured && unit.type == UnitType.GUARD){
-				capturables.add(unit);
-			} else if(unit.canBeCaptured && unit.type == UnitType.DRAGON){
-			for (Unit guard : board.units){
-					if(guard.type == UnitType.GUARD || guard.type == UnitType.KING){
-						if(guard.x == unit.x && guard.y == unit.y){
-							capturables.add(unit);
-						}
-					}
-				}
-			}
-		}
-		
-		for (Unit unit : capturables){
-			if(unit.type == UnitType.GUARD){
-				board.units.remove(unit);
-				board.units.add(new Dragon(unit.x, unit.y, board));
-			} else if(unit.type == UnitType.DRAGON){
-				board.units.remove(unit);
-			}
-		}
-		
-		// Why do we draw board twice????DrawBoard();
-		System.out.println("Score of this board is: "+ board.EvaluateBoard());
-	}
-	
-	
-	
-	public void DisplayBoard(){
-		for(int x = 0; x < board.getSize(); x++){
-			
-			
-			for(int y = 0; y < board.getSize(); y++){
-				System.out.print(board.grid[x][y]);
-			}
-			System.out.print("\n");
-		}
-	}
-	
-	
-	
-	
-	
-	public void GenerateMinMaxTree(State root){
-		List<Move> moves = root.board.allPossibleMoves();
-		
-		
-		for(Move curMove : moves){
-			//root.childStates.add(new State(m));
-		}
-	}
-	
 	
 	public static void main(String[] args){
 		new Controller().StartGame();
