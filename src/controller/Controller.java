@@ -20,45 +20,16 @@ public class Controller {
 	/** The maximum depth to explore in the tree */
 	public static int maxDepth = 3;
 	
-	/** If true, it is the kings turn to play */
-	public boolean kingsTurn;
 	
-	/**
-	 * This will perform the given move and return true or false depending on whether it was successful or not
-	 * 
-	 * @param move The move to perform
-	 * @precondition move must be valid, not filled and piece moving must be on its turn
-	 * @return Whether the move succeeded or not
-	 */
-	public boolean Move(Move move){
-		
-		/**check for turn **/
-		if ((move.toMove.type == UnitType.GUARD || move.toMove.type == UnitType.KING) && !kingsTurn){
-			System.out.println("Silly King its not your turn");
-			return false;
-		}
-		else if((move.toMove.type == UnitType.DRAGON) && kingsTurn){
-			System.out.println("Silly Dragon its not your turn");
-			return false;
-
-		}
-		
-		System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
-				" moved to " + convertToChar(move.x) + (move.y + 1));
-		
-		move.toMove.x = move.x;
-		move.toMove.y = move.y;
-		
-		
-		return true;
-	}
+	
+	
 	
 	/**
 	 * Starts the game by creating a new board and deciding which team goes first.
 	 */
 	public void StartGame(){
 		board = new Board();
-		kingsTurn = false;
+		board.Initialize();
 		CurrentTurn();
 	}
 	
@@ -76,7 +47,7 @@ public class Controller {
 			UpdateBoard();
 			DisplayBoard();
 			
-			possibleMoves = allPossibleMoves(board);
+			possibleMoves = board.allPossibleMoves();
 			
 			boolean kingCanMove = false;
 			
@@ -100,57 +71,22 @@ public class Controller {
 			
 			for (Move move: possibleMoves){
 				if( startX == move.toMove.x && startY == move.toMove.y && endX == move.x && endY == move.y){
-					if (Move(move)){
-						kingsTurn = !kingsTurn;
-					}
+					board.Move(move);
 					break;
-					
 				}
 			}
 		}
 		
 		scanner.close();
-		
 	}
 	
-	private void UpdateFlags(){
-		for(Unit unit : board.units){
-			unit.canBeCaptured = unit.isSurrounded();
-		}
-	}
 	
-	public static List<Move> allPossibleMoves(Board board){
-		List<Move> moves = new LinkedList<Move>();
-		
-		if(isWinningState(board))
-			return moves;
-		
-		for (Unit unit : board.units){
-			if(unit.PossibleMoves() != null){
-				moves.addAll(unit.PossibleMoves());
-			}
-		}
-		
-		return moves;
-	}
 	
-	public static boolean isWinningState(Board board){
-		for (Unit unit : board.units){
-			if(unit.type == UnitType.KING){
-				if(unit.y == 4){
-					return true;
-				} else if (unit.isSurrounded() && unit.PossibleMoves().size() == 0){
-					return true;
-				}
-				
-				break;
-			}
-		}
-		
-		return false;
-	}
 	
-	private int convertToNum(char toConvert){
+	
+	
+	
+	public static int convertToNum(char toConvert){
 		int num = -1;
 		
 		switch(toConvert){
@@ -204,8 +140,8 @@ public class Controller {
 		return num;
 	}
 	
-	private char convertToChar(int toConvert){
-		char character = board.emptyChar;
+	public static char convertToChar(int toConvert){
+		char character = '?';
 		
 		switch(toConvert){
 		case(0):
@@ -234,8 +170,8 @@ public class Controller {
 	public void EndGame(){}
 	
 	public void UpdateBoard(){
-		DrawBoard();
-		UpdateFlags();
+		board.UpdateGrid();
+		board.UpdateFlags();
 		
 		List<Unit> capturables = new LinkedList<Unit>();
 		
@@ -263,35 +199,10 @@ public class Controller {
 		}
 		
 		// Why do we draw board twice????DrawBoard();
-		System.out.println("Score of this board is: "+EvaluateBoard(board));
+		System.out.println("Score of this board is: "+ board.EvaluateBoard());
 	}
 	
-	public void DrawBoard(){
-		for(int x = 0; x < board.getSize(); x++){
-			for(int y = 0; y < board.getSize(); y++){
-				board.grid[x][y] = board.emptyChar;
-			}
-		}
-		
-		for (Unit unit : board.units){
-			switch(unit.type){
-			case DRAGON:
-				/** to prevent gaurds being overwritten by dragons**/
-				if (board.grid[unit.x][unit.y] != 'G' && board.grid[unit.x][unit.y]!= 'K')
-					board.grid[unit.x][unit.y] = 'D';
-				break;
-			case GUARD:
-				board.grid[unit.x][unit.y] = 'G';
-				break;
-			case KING:
-				board.grid[unit.x][unit.y] = 'K';
-				break;
-			default:
-				break;
-			
-			}
-		}
-	}
+	
 	
 	public void DisplayBoard(){
 		for(int x = 0; x < board.getSize(); x++){
@@ -306,85 +217,10 @@ public class Controller {
 	
 	
 	
-	public int CheckAdjacent(Unit unit, Board board){
-		int adjacentscore = 0;
-		
-		if (unit.type == UnitType.GUARD || unit.type == UnitType.KING){
-			for (Unit other:board.units){
-				if (unit == other){
-					continue;
-				}
-				else if(other.type == UnitType.GUARD || other.type == UnitType.KING){
-					/** At this point im not sure if only horizontal checks are required. Is it even good to have a vertical check in the game? Maybe just for the king?**/
-					/**Horizontal check**/
-					if ((other.y == unit.y-1 && other.x == unit.x)|| (other.y == unit.y+1 && other.x == unit.x)){
-						adjacentscore++;
-					}
-				}
-				/** close to a dragon**/
-				else{
-					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore--;
-					}
-				}	
-			}
-		}
-		/** is dragon**/
-		else{
-			for (Unit other:board.units){
-				if (unit == other){
-					continue;
-				}
-				else if(other.type == UnitType.DRAGON){
-					/** check all around including diagonal**/
-					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore--;
-					}
-				}
-				else{
-					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore++;
-					}
-				}
-			}
-		}
-		
-		return adjacentscore;
-	}
-	
-	
-	/**
-	 * Takes a board and evaluates the utility of it
-	 * 
-	 * @param board The board to evaluate
-	 * @return The utility of the board state itself
-	 */
-	public int EvaluateBoard(Board board){
-		int score = 0;
-		int c = 2;
-		for(Unit unit: board.units){
-			switch(unit.type){
-				case GUARD:	
-					score+=c; 
-					
-					break;
-							
-				case KING: 
-					score+=c;
-					break;
-							
-				case DRAGON: 
-					score-=c;
-					break;
-			}
-			score+=CheckAdjacent(unit, board);
-		}
-		return score;
-	}
 	
 	
 	public void GenerateMinMaxTree(State root){
-		List<Move> moves = Controller.allPossibleMoves(root.board);
+		List<Move> moves = root.board.allPossibleMoves();
 		
 		
 		for(Move curMove : moves){
