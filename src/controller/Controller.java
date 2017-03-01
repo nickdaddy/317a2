@@ -83,14 +83,7 @@ public class Controller {
 	 * Displays the current state of the board.
 	 */
 	public void DisplayBoard(){
-		for(int x = 0; x < board.getSize(); x++){
-			
-			
-			for(int y = 0; y < board.getSize(); y++){
-				System.out.print(board.grid[x][y]);
-			}
-			System.out.print("\n");
-		}
+		board.DisplayBoard();
 	}
 	
 	/**

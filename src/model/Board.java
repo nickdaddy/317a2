@@ -15,6 +15,7 @@ public class Board {
 	/** This is the actual board grid */
 	public char grid[][];
 	
+	/** The character to use as an empty spot on the grid */
 	public final char emptyChar = '*';
 	
 	/** size of the board**/
@@ -26,11 +27,12 @@ public class Board {
 	/** If true, it is the kings turn to play */
 	public boolean kingsTurn;
 	
-	/**
-	 * Creates a new board for the game to be played on
-	 */
-	public Board(){}
-	
+	/********************\
+	 * 					 *
+	 * PUBLIC FUNCTIONS *
+	 * 					 *
+	\********************/
+
 	/**
 	 * Creates a new board for the game to be played on
 	 */
@@ -38,40 +40,9 @@ public class Board {
 		createGrid();
 		spawnUnits();
 		kingsTurn = false;
-	}
-	
-	/**
-	 * Checks if the given x and y coordinates are within the board size
-	 * @param x The x pos to check
-	 * @param y The y pos to check
-	 * @return Whether the x and y positions are within the board boundaries
-	 */
-	public boolean inBounds(int x, int y){
-		return !(x < 0 || getSize() - 1 < x || y < 0 || getSize() - 1 < y);
+		UpdateBoard();
 	}
 
-	/** Spawns all the units for the game and places them on the grid */
-	private void spawnUnits() {
-		
-		units = new LinkedList<Unit>();
-		
-		/** Spawn King**/
-		King king = new King(this);
-		units.add(king);
-		
-		/** Spawn Guards**/
-		for (int i = 1; i<4; i++){
-			Guard guard = new Guard(1, i, this);
-			units.add(guard);
-		}
-		
-		/** Spawn Dragons**/
-		for (int i = 0;i<5; i++){
-			Dragon dragon = new Dragon(3, i, this);
-			units.add(dragon);
-		}
-	}
-	
 	/**
 	 * Deep clones the board
 	 * @return A deep clone of this board
@@ -157,76 +128,58 @@ public class Board {
 	}
 	
 	/**
-	 * This will perform the given move and return true or false depending on whether it was successful or not
-	 * 
-	 * @param move The move to perform
-	 * @precondition move must be valid, not filled and piece moving must be on its turn
-	 * @return Whether the move succeeded or not
+	 * Updates the state of the board by updating the grid, updating the capture flags, and removing/adding units
+	 * where appropriate
 	 */
-	public boolean Move(Move move){
+	public void UpdateBoard(){
+		UpdateGrid();
+		UpdateFlags();
 		
-		/**check for turn **/
-		if ((move.toMove.type == UnitType.GUARD || move.toMove.type == UnitType.KING) && !kingsTurn){
-			System.out.println("Silly King its not your turn");
-			return false;
-		}
-		else if((move.toMove.type == UnitType.DRAGON) && kingsTurn){
-			System.out.println("Silly Dragon its not your turn");
-			return false;
-
-		}
-		
-		System.out.println(move.toMove.toString() + " at " + Controller.convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
-				" moved to " + Controller.convertToChar(move.x) + (move.y + 1));
-		
-		move.toMove.x = move.x;
-		move.toMove.y = move.y;
-		kingsTurn = !kingsTurn;
-		
-		return true;
-	}
-
-	/** Creates the grid for which the units will be placed on */
-	private void createGrid() {
-		grid = new char[size][size];
-		
-		for(int x = 0; x < size; x++){
-			for(int y = 0; y < size; y++){
-				grid[x][y] = emptyChar;
-			}
-		}
-	}
-	
-	/**
-	 * Updates the grid of the board by redrawing the position of each unit
-	 */
-	public void UpdateGrid(){
-		for(int x = 0; x < getSize(); x++){
-			for(int y = 0; y < getSize(); y++){
-				grid[x][y] = emptyChar;
-			}
-		}
+		List<Unit> capturables = new LinkedList<Unit>();
 		
 		for (Unit unit : units){
-			switch(unit.type){
-			case DRAGON:
-				/** to prevent guards being overwritten by dragons**/
-				if (grid[unit.x][unit.y] != 'G' && grid[unit.x][unit.y]!= 'K')
-					grid[unit.x][unit.y] = 'D';
-				break;
-			case GUARD:
-				grid[unit.x][unit.y] = 'G';
-				break;
-			case KING:
-				grid[unit.x][unit.y] = 'K';
-				break;
-			default:
-				break;
-			
+			if(unit.canBeCaptured && unit.type == UnitType.GUARD){
+				capturables.add(unit);
+			} else if(unit.canBeCaptured && unit.type == UnitType.DRAGON){
+			for (Unit guard : units){
+					if(guard.type == UnitType.GUARD || guard.type == UnitType.KING){
+						if(guard.x == unit.x && guard.y == unit.y){
+							capturables.add(unit);
+						}
+					}
+				}
 			}
 		}
+		
+		for (Unit unit : capturables){
+			if(unit.type == UnitType.GUARD){
+				units.remove(unit);
+				units.add(new Dragon(unit.x, unit.y, this));
+			} else if(unit.type == UnitType.DRAGON){
+				units.remove(unit);
+			}
+		}
+		
+		//Updates the grid again to reflect any changes made by removing/adding units
+		UpdateGrid();
+		UpdateFlags();
+		
+		System.out.println("Score of this board is: "+ EvaluateBoard());
 	}
 	
+	/** Displays the current state of the board */
+	public void DisplayBoard(){
+		System.out.print("\n");
+		
+		for(int x = 0; x < getSize(); x++){
+			for(int y = 0; y < getSize(); y++){
+				System.out.print(grid[x][y]);
+			}
+			System.out.print("\n");
+		}
+		
+		System.out.print("\n");
+	}
 	/**
 	 * Gets the list of possible moves on the current board
 	 * @return The list of possible moves to be made
@@ -264,6 +217,46 @@ public class Board {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Checks if the given x and y coordinates are within the board size
+	 * @param x The x pos to check
+	 * @param y The y pos to check
+	 * @return Whether the x and y positions are within the board boundaries
+	 */
+	public boolean inBounds(int x, int y){
+		return !(x < 0 || getSize() - 1 < x || y < 0 || getSize() - 1 < y);
+	}
+	
+	/**
+	 * This will perform the given move and return true or false depending on whether it was successful or not
+	 * 
+	 * @param move The move to perform
+	 * @precondition move must be valid, not filled and piece moving must be on its turn
+	 * @return Whether the move succeeded or not
+	 */
+	public boolean Move(Move move){
+		
+		/**check for turn **/
+		if ((move.toMove.type == UnitType.GUARD || move.toMove.type == UnitType.KING) && !kingsTurn){
+			System.out.println("Silly King its not your turn");
+			return false;
+		}
+		else if((move.toMove.type == UnitType.DRAGON) && kingsTurn){
+			System.out.println("Silly Dragon its not your turn");
+			return false;
+
+		}
+		
+		System.out.println(move.toMove.toString() + " at " + Controller.convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
+				" moved to " + Controller.convertToChar(move.x) + (move.y + 1));
+		
+		move.toMove.x = move.x;
+		move.toMove.y = move.y;
+		kingsTurn = !kingsTurn;
+		
+		return true;
 	}
 	
 	/**
@@ -346,60 +339,93 @@ public class Board {
 		return adjacentscore;
 	}
 	
-	/**
-	 * Updates the state of the board by updating the grid, updating the capture flags, and removing/adding units
-	 * where appropriate
-	 */
-	public void UpdateBoard(){
-		UpdateGrid();
-		UpdateFlags();
-		
-		List<Unit> capturables = new LinkedList<Unit>();
-		
-		for (Unit unit : units){
-			if(unit.canBeCaptured && unit.type == UnitType.GUARD){
-				capturables.add(unit);
-			} else if(unit.canBeCaptured && unit.type == UnitType.DRAGON){
-			for (Unit guard : units){
-					if(guard.type == UnitType.GUARD || guard.type == UnitType.KING){
-						if(guard.x == unit.x && guard.y == unit.y){
-							capturables.add(unit);
-						}
-					}
-				}
-			}
-		}
-		
-		for (Unit unit : capturables){
-			if(unit.type == UnitType.GUARD){
-				units.remove(unit);
-				units.add(new Dragon(unit.x, unit.y, this));
-			} else if(unit.type == UnitType.DRAGON){
-				units.remove(unit);
-			}
-		}
-		
-		//Updates the grid again to reflect any changes made by removing/adding units
-		UpdateGrid();
-		UpdateFlags();
-		
-		System.out.println("Score of this board is: "+ EvaluateBoard());
+	/** Returns the size of the board */
+	public int getSize() {
+		return size;
 	}
 	
+	/********************\
+	 * 					 *
+	 * PRIVATE FUNCTIONS *
+	 * 					 *
+	\********************/
+	
 	/** Updates the capture flags of each unit */
-	public void UpdateFlags(){
+	private void UpdateFlags(){
 		for(Unit unit : units){
 			unit.canBeCaptured = unit.isSurrounded();
 		}
 	}
 	
-	public int getSize() {
-		return size;
+	/**
+	 * Updates the grid of the board by redrawing the position of each unit
+	 */
+	private void UpdateGrid(){
+		for(int x = 0; x < getSize(); x++){
+			for(int y = 0; y < getSize(); y++){
+				grid[x][y] = emptyChar;
+			}
+		}
+		
+		for (Unit unit : units){
+			switch(unit.type){
+			case DRAGON:
+				/** to prevent guards being overwritten by dragons**/
+				if (grid[unit.x][unit.y] != 'G' && grid[unit.x][unit.y]!= 'K')
+					grid[unit.x][unit.y] = 'D';
+				break;
+			case GUARD:
+				grid[unit.x][unit.y] = 'G';
+				break;
+			case KING:
+				grid[unit.x][unit.y] = 'K';
+				break;
+			default:
+				break;
+			
+			}
+		}
+	}
+	
+	/** Spawns all the units for the game and places them on the grid */
+	private void spawnUnits() {
+		
+		units = new LinkedList<Unit>();
+		
+		/** Spawn King**/
+		King king = new King(this);
+		units.add(king);
+		
+		/** Spawn Guards**/
+		for (int i = 1; i<4; i++){
+			Guard guard = new Guard(1, i, this);
+			units.add(guard);
+		}
+		
+		/** Spawn Dragons**/
+		for (int i = 0;i<5; i++){
+			Dragon dragon = new Dragon(3, i, this);
+			units.add(dragon);
+		}
+	}
+	
+	/** Creates the grid for which the units will be placed on */
+	private void createGrid() {
+		grid = new char[size][size];
+		
+		for(int x = 0; x < size; x++){
+			for(int y = 0; y < size; y++){
+				grid[x][y] = emptyChar;
+			}
+		}
 	}
 	
 	/** For testing**/
 	public static void main(String[] args){
 		Board board = new Board();
-		
+		board.Initialize();
+		board.DisplayBoard();
+		Board cloned = board.deepCloneAndMove(new Move(board.units.get(5), 0, 0));
+		cloned.DisplayBoard();
 	}
 }
