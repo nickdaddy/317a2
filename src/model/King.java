@@ -128,7 +128,7 @@ public class King extends Unit{
 			}
 		}
 			
-		return 3 < dragonCount;
+		return 3 <= dragonCount;
 	}
 	
 	
