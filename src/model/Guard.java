@@ -46,7 +46,7 @@ public class Guard extends Unit {
 	@Override
 	public boolean isValidMove(Move move) {
 		
-		if (move.x < 0 || board.getSize() < move.x || move.y < 0 || board.getSize() <  move.y)
+		if (move.x < 0 || board.getSize() - 1 < move.x || move.y < 0 || board.getSize() - 1 <  move.y)
 			return false;
 		
 		if(board.grid[move.x][move.y] == board.emptyChar){

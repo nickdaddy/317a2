@@ -20,6 +20,7 @@ public class State {
 		move.toMove.x = move.x;
 		move.toMove.y = move.y;
 		this.board = board;
+		utility = board.EvaluateBoard();
 	}
 
 	/** The move this state represents */

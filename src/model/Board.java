@@ -20,6 +20,12 @@ public class Board {
 	
 	/** size of the board**/
 	private int size = 5;
+	
+	/** Display whenever a unit moves? */
+	private final boolean displayMoves = false;
+	
+	/** Display the current board score? */
+	private final boolean displayScore = false;
 
 	/** This is the list of units on the board currently */
 	public List<Unit> units;
@@ -87,6 +93,7 @@ public class Board {
 	 */
 	public Board deepCloneAndMove(Move move){
 		Board cloneBoard = new Board();
+		cloneBoard.kingsTurn = this.kingsTurn;
 		cloneBoard.units = new LinkedList<Unit>();
 		Unit cloned = null;
 		//Deep clone the board units
@@ -121,7 +128,7 @@ public class Board {
 			}
 		}
 		
-		cloneBoard.kingsTurn = this.kingsTurn;
+		
 		cloneBoard.UpdateBoard();
 		
 		return cloneBoard;
@@ -164,7 +171,8 @@ public class Board {
 		UpdateGrid();
 		UpdateFlags();
 		
-		System.out.println("Score of this board is: "+ EvaluateBoard());
+		if(displayScore)
+			System.out.println("Score of this board is: "+ EvaluateBoard());
 	}
 	
 	/** Displays the current state of the board */
@@ -249,8 +257,9 @@ public class Board {
 
 		}
 		
-		System.out.println(move.toMove.toString() + " at " + Controller.convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
-				" moved to " + Controller.convertToChar(move.x) + (move.y + 1));
+		if(displayMoves)
+			System.out.println(move.toMove.toString() + " at " + Controller.convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
+					" moved to " + Controller.convertToChar(move.x) + (move.y + 1));
 		
 		move.toMove.x = move.x;
 		move.toMove.y = move.y;
