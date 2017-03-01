@@ -17,6 +17,9 @@ public class Controller {
 	/** The board of the game to manipulate */
 	public Board board;
 	
+	/** The maximum depth to explore in the tree */
+	public static int maxDepth = 3;
+	
 	/** If true, it is the kings turn to play */
 	public boolean kingsTurn;
 	
@@ -73,7 +76,7 @@ public class Controller {
 			UpdateBoard();
 			DisplayBoard();
 			
-			possibleMoves = allPossibleMoves();
+			possibleMoves = allPossibleMoves(board);
 			
 			boolean kingCanMove = false;
 			
@@ -116,8 +119,11 @@ public class Controller {
 		}
 	}
 	
-	private List<Move> allPossibleMoves(){
+	public static List<Move> allPossibleMoves(Board board){
 		List<Move> moves = new LinkedList<Move>();
+		
+		if(isWinningState(board))
+			return moves;
 		
 		for (Unit unit : board.units){
 			if(unit.PossibleMoves() != null){
@@ -126,6 +132,22 @@ public class Controller {
 		}
 		
 		return moves;
+	}
+	
+	public static boolean isWinningState(Board board){
+		for (Unit unit : board.units){
+			if(unit.type == UnitType.KING){
+				if(unit.y == 4){
+					return true;
+				} else if (unit.isSurrounded() && unit.PossibleMoves().size() == 0){
+					return true;
+				}
+				
+				break;
+			}
+		}
+		
+		return false;
 	}
 	
 	private int convertToNum(char toConvert){
@@ -255,7 +277,8 @@ public class Controller {
 			switch(unit.type){
 			case DRAGON:
 				/** to prevent gaurds being overwritten by dragons**/
-				if (board.grid[unit.x][unit.y] != 'G' && board.grid[unit.x][unit.y]!= 'K')board.grid[unit.x][unit.y] = 'D';
+				if (board.grid[unit.x][unit.y] != 'G' && board.grid[unit.x][unit.y]!= 'K')
+					board.grid[unit.x][unit.y] = 'D';
 				break;
 			case GUARD:
 				board.grid[unit.x][unit.y] = 'G';
@@ -328,6 +351,14 @@ public class Controller {
 		
 		return adjacentscore;
 	}
+	
+	
+	/**
+	 * Takes a board and evaluates the utility of it
+	 * 
+	 * @param board The board to evaluate
+	 * @return The utility of the board state itself
+	 */
 	public int EvaluateBoard(Board board){
 		int score = 0;
 		int c = 2;
@@ -349,6 +380,16 @@ public class Controller {
 			score+=CheckAdjacent(unit, board);
 		}
 		return score;
+	}
+	
+	
+	public void GenerateMinMaxTree(State root){
+		List<Move> moves = Controller.allPossibleMoves(root.board);
+		
+		
+		for(Move curMove : moves){
+			//root.childStates.add(new State(m));
+		}
 	}
 	
 	
