@@ -291,16 +291,17 @@ public class Board {
 		for(Unit unit: units){
 			switch(unit.type){
 				case GUARD:	
-					score+=c; 
-					
+					score+=c + unit.x;
 					break;
 							
 				case KING: 
-					score+=c;
+					score +=c;
+					score += unit.x;
 					break;
-							
+
 				case DRAGON: 
 					score-=c;
+					score -= unit.x;
 					break;
 			}
 			score += CheckAdjacent(unit);
@@ -345,12 +346,12 @@ public class Board {
 				else if(other.type == UnitType.DRAGON){
 					/** check all around including diagonal**/
 					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore--;
+						adjacentscore++;
 					}
 				}
 				else{
 					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore++;
+						adjacentscore--;
 					}
 				}
 			}

@@ -83,7 +83,7 @@ public class MinMaxTree {
 			for (State curState : currentLevel){
 				curState.childStates = generateChildStates(curState, x);
 				nextLevel.addAll(curState.childStates);
-				curState.board.DisplayBoard();
+				//curState.board.DisplayBoard();
 			}
 			
 			System.out.println("Level " + x + " contains " + nextLevel.size() + " states.");

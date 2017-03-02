@@ -110,7 +110,7 @@ public class AlphaBetaTree {
 		
 
 		System.out.println(tree.root.utility);
-		System.out.println("Looked at :"+ tree.count + "Nodes");
+		System.out.println("Looked at :"+ tree.count + " Nodes");
 		board.Move(tree.root.move);
 		board.DisplayBoard();
 		

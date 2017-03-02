@@ -18,7 +18,7 @@ public class Controller {
 	public Board board;
 	
 	/** The maximum depth to explore in the tree */
-	public static int maxDepth = 12;
+	public static int maxDepth = 9;
 	
 	/**
 	 * Starts the game by creating a new board and deciding which team goes first.
@@ -30,6 +30,9 @@ public class Controller {
 	}
 	
 	public void CurrentTurn(){
+		
+		int turnCounter = 1;
+		
 		Scanner scanner = new Scanner(System.in);
 		
 		boolean gameOver = false;
@@ -58,10 +61,18 @@ public class Controller {
 			
 			String command = scanner.nextLine();
 			
-			int startX = convertToNum(command.charAt(0));
-			int startY = convertToNum(command.charAt(1));
-			int endX = convertToNum(command.charAt(2));
-			int endY = convertToNum(command.charAt(3));
+			
+			int startX = -1;
+			int startY = -1;
+			int endX = -1;
+			int endY = -1;
+			
+			if (command.length() >= 4) {
+				startX = convertToNum(command.charAt(0));
+				startY = convertToNum(command.charAt(1));
+				endX = convertToNum(command.charAt(2));
+				endY = convertToNum(command.charAt(3));
+			}
 			
 			for (Move move: possibleMoves){
 				if( startX == move.toMove.x && startY == move.toMove.y && endX == move.x && endY == move.y){
@@ -69,6 +80,22 @@ public class Controller {
 					break;
 				}
 			}
+			
+			board.UpdateBoard();
+			//DisplayBoard();
+			
+			if(board.isWinningState()){
+				EndGame();
+			}
+			
+			System.out.println("Turn #" + turnCounter);
+			//Move aiMove = new MinMaxTree(board, Controller.maxDepth).EvaluateTree(board.kingsTurn).move;
+			AlphaBetaTree tree = new AlphaBetaTree(board, Controller.maxDepth, board.kingsTurn);
+			Move aiMove = tree.root.move;
+			System.out.println("MinMax looked at: "+ tree.count + " Nodes");
+			
+			board.Move(aiMove);
+			turnCounter++;
 		}
 		
 		scanner.close();
@@ -77,7 +104,9 @@ public class Controller {
 	/**
 	 * Ends the game by announcing the winner and starting a new game.
 	 */
-	public void EndGame(){}
+	public void EndGame(){
+		System.out.println("GAME OVER");
+	}
 	
 	/**
 	 * Displays the current state of the board.
