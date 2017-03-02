@@ -10,7 +10,7 @@ public abstract class Unit {
 
 	/** The x and y coordinate of the unit */
 	public int x, y;
-	
+	public int ID;
 	/** The type of the unit */
 	public UnitType type;
 	

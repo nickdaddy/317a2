@@ -16,7 +16,7 @@ public class Board {
 	public char grid[][];
 	
 	/** The character to use as an empty spot on the grid */
-	public final char emptyChar = '*';
+	public final char emptyChar = '-';
 	
 	/** size of the board**/
 	private int size = 5;
@@ -127,7 +127,8 @@ public class Board {
 				cloned = new Dragon(x, y, cloneBoard);
 				break;
 			}
-			
+			cloned.ID = unit.ID;
+
 			cloneBoard.units.add(cloned);
 			
 			//If we just cloned the unit we are trying to move, apply the move to the newly cloned board
@@ -155,7 +156,7 @@ public class Board {
 			if(unit.canBeCaptured && unit.type == UnitType.GUARD){
 				capturables.add(unit);
 			} else if(unit.canBeCaptured && unit.type == UnitType.DRAGON){
-			for (Unit guard : units){
+				for (Unit guard : units){
 					if(guard.type == UnitType.GUARD || guard.type == UnitType.KING){
 						if(guard.x == unit.x && guard.y == unit.y){
 							capturables.add(unit);
@@ -189,9 +190,34 @@ public class Board {
 		System.out.print("\n");
 		
 		for(int x = 0; x < getSize(); x++){
-			for(int y = 0; y < getSize(); y++){
-				System.out.print(grid[x][y]);
+			if (x == 0) {
+				System.out.println("   1 2 3 4 5");
+				System.out.println(" ___________");
 			}
+			for(int y = 0; y < getSize(); y++){
+				if (y == 0) {
+					switch (x) {
+
+					case 0:
+						System.out.print("A| ");
+						break;
+					case 1:
+						System.out.print("B| ");
+						break;
+					case 2:
+						System.out.print("C| ");
+						break;
+					case 3:
+						System.out.print("D| ");
+						break;
+					case 4:
+						System.out.print("E| ");
+						break;
+					}
+				}
+				System.out.print(grid[x][y] + " ");
+			}
+			
 			System.out.print("\n");
 		}
 		
@@ -217,14 +243,52 @@ public class Board {
 		return moves;
 	}
 	
+	public List<Move> allPossibleMoves(Move moveof4p){
+		List<Move> moves = new LinkedList<Move>();
+		
+		if(isWinningState())
+			return moves;
+		
+		for (Unit unit : units){
+			
+			if(unit.PossibleMoves() != null){
+				
+				
+				moves.addAll(unit.PossibleMoves());
+				/**for (Move move : moves) {
+					if ( moves.size()>1 && moveof4p != null && move.x == moveof4p.x && move.y == moveof4p.y && move.toMove.ID == moveof4p.toMove.ID ){
+						moves.remove(move);
+						break;
+					}
+				}**/
+				
+			}
+		}
+		
+		return moves;
+	}
+	
 	/**
 	 * Checks if the board is currently in a state in which a team has won.
 	 * @return Whether the board is currently in a winning state or not
 	 */
 	public boolean isWinningState(){
+		boolean cannotMove = true;
 		for (Unit unit : units){
+			
+			if (kingsTurn && unit.type == UnitType.GUARD || unit.type == UnitType.KING){
+				if (unit.PossibleMoves()!=null){
+					cannotMove = false;
+				}
+			}
+			if ( !kingsTurn && unit.type == UnitType.DRAGON){
+				if (unit.PossibleMoves()!=null){
+					cannotMove = false;
+				}
+			}
+			
 			if(unit.type == UnitType.KING){
-				if(unit.y == getSize() - 1){
+				if(unit.x == getSize() - 1){
 					return true;
 				} else if (unit.isSurrounded() && unit.PossibleMoves().size() == 0){
 					return true;
@@ -232,9 +296,10 @@ public class Board {
 				
 				break;
 			}
+			
 		}
 		
-		return false;
+		return cannotMove;
 	}
 	
 	/**
@@ -287,27 +352,76 @@ public class Board {
 	 */
 	public int EvaluateBoard(){
 		int score = 0;
-		int c = 2;
+		int c = 4;
 		for(Unit unit: units){
 			switch(unit.type){
 				case GUARD:	
-					score+=c + unit.x;
+					score += c; //+ unit.x;
 					break;
 							
 				case KING: 
 					score +=c;
-					score += unit.x;
+					score += unit.x; // Higher score when closer to bottom
+					if (unit.x == 4) {
+						score += 50; // High score for king reaching bottom row.
+					}
+					// Since the game ends before the king is removed, we check if the king is able to be captured.
+					if (unit.isSurrounded() && unit.PossibleMoves().size() == 0) {
+						score -= 50;
+					}
 					break;
 
 				case DRAGON: 
-					score-=c;
-					score -= unit.x;
+					score -= c+2;
+					//score -= unit.x;
 					break;
 			}
 			score += CheckAdjacent(unit);
 		}
 		return score;
 	}
+	
+	public int EvaluateBoard(Move moveof3p, Move move){
+		int score = 0;
+		int c = 4;
+		/**
+		if (moveof3p != null && move.x == moveof3p.x && move.y == moveof3p.y && move.toMove.ID == moveof3p.toMove.ID ){
+			if (kingsTurn){
+				score+=10;
+			}
+			else{
+				score-=10;
+			}
+		}**/
+		
+		for(Unit unit: units){
+			switch(unit.type){
+				case GUARD:	
+					score += c; //+ unit.x;
+					break;
+							
+				case KING: 
+					score +=c;
+					score += unit.x; // Higher score when closer to bottom
+					if (unit.x == 4) {
+						score += 50; // High score for king reaching bottom row.
+					}
+					// Since the game ends before the king is removed, we check if the king is able to be captured.
+					if (unit.isSurrounded() && unit.PossibleMoves().size() == 0) {
+						score -= 50;
+					}
+					break;
+
+				case DRAGON: 
+					score -= c+2;
+					//score -= unit.x;
+					break;
+			}
+			score += CheckAdjacent(unit);
+		}
+		return score;
+	}
+	
 	
 	/**
 	 * Calculates a heuristic score based on the units surrounding the given unit
@@ -322,15 +436,42 @@ public class Board {
 				if (unit == other){
 					continue;
 				}
-				else if(other.type == UnitType.GUARD || other.type == UnitType.KING){
+				else if(other.type == UnitType.GUARD){
 					/** At this point im not sure if only horizontal checks are required. Is it even good to have a vertical check in the game? Maybe just for the king?**/
 					/**Horizontal check**/
-					if ((other.y == unit.y-1 && other.x == unit.x)|| (other.y == unit.y+1 && other.x == unit.x)){
+					if ((other.y == unit.y-1 && other.x == unit.x) || (other.y == unit.y+1 && other.x == unit.x)){
 						adjacentscore++;
 					}
+					/** Vertical check **/
+					if ((other.x == unit.x-1 && other.y == unit.y) || (other.x == unit.x+1 && other.y == unit.y)){
+						adjacentscore++;
+					}
+					/**Horizontal check 2 spaces away**/
+					if ((other.y == unit.y-2 && other.x == unit.x) || (other.y == unit.y+2 && other.x == unit.x)){
+						adjacentscore += 3;
+					}
+					/** Vertical check 2 spaces away**/
+					if ((other.x == unit.x-2 && other.y == unit.y) || (other.x == unit.x+2 && other.y == unit.y)){
+						adjacentscore += 3;
+					}
+				}
+				else if (other.type == UnitType.KING) {
+					/** check all around including diagonal**/
+					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
+						adjacentscore++;
+					}
+					/**Horizontal check 2 spaces away**/
+					if ((other.y == unit.y-2 && other.x == unit.x) || (other.y == unit.y+2 && other.x == unit.x)){
+						adjacentscore += 3;
+					}
+					/** Vertical check 2 spaces away**/
+					if ((other.x == unit.x-2 && other.y == unit.y) || (other.x == unit.x+2 && other.y == unit.y)){
+						adjacentscore += 3 ;
+					}
+					
 				}
 				/** close to a dragon**/
-				else{
+				else {
 					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
 						adjacentscore--;
 					}
@@ -354,6 +495,7 @@ public class Board {
 						adjacentscore--;
 					}
 				}
+				
 			}
 		}
 		
@@ -415,18 +557,23 @@ public class Board {
 		
 		/** Spawn King**/
 		King king = new King(0, 2, this);
+		king.ID= units.size();
 		units.add(king);
 		
 		/** Spawn Guards**/
 		for (int i = 1; i<4; i++){
 			Guard guard = new Guard(1, i, this);
+			guard.ID = units.size();
 			units.add(guard);
+
 		}
 		
 		/** Spawn Dragons**/
 		for (int i = 0;i<5; i++){
 			Dragon dragon = new Dragon(3, i, this);
+			dragon.ID = units.size();
 			units.add(dragon);
+			
 		}
 	}
 	

@@ -31,4 +31,6 @@ public class State {
 	
 	/** The list of child states of the board */
 	public List<State> childStates;
+	
+	public State parent;
 }

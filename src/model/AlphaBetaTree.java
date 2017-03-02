@@ -12,9 +12,10 @@ public class AlphaBetaTree {
 	public int count;
 	
 	public AlphaBetaTree(Board board, int maxdepth, boolean kingsturn){
-		root = new ABState(null, board, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		root = new ABState(null, board, Integer.MIN_VALUE, Integer.MAX_VALUE, null);
 		maxDepth = maxdepth;
 		count = 0;
+
 		if (kingsturn){
 			root = Alpha(root, 0);
 		}
@@ -29,25 +30,41 @@ public class AlphaBetaTree {
 			return st;
 		}
 		
-		List<Move> moves = st.board.allPossibleMoves();
+		List<Move> moves;
+		if (st.parent!=null && st.parent.parent != null && st.parent.parent.parent!=null && st.parent.parent.parent.parent!=null ){
+
+			moves = st.board.allPossibleMoves(st.parent.parent.parent.parent.move);
+		}
+		else{
+			moves = st.board.allPossibleMoves();
+		}
 		
-		Move bestmove = null;
+		Move bestmove =st.move;
 		int best = st.alpha;
 		for (Move move: moves){
 			if( move.toMove.type== UnitType.DRAGON){
 				continue;
 			}
 			count++;
-			ABState state = new ABState(move, st.board.deepCloneAndMove(move), st.alpha, st.beta);
 			
-			state = Beta(state, depth+1);
+		
+			ABState state = new ABState(move, st.board.deepCloneAndMove(move), st.alpha, st.beta, st);
+			
+			Beta(state, depth+1);
+			if (st == root)
+				System.out.println(state.utility);
+
+		
 			
 			if (state.utility>best){
+			
+			
 				best = state.utility;
-				st.alpha = state.utility;
+				st.beta = state.utility;
 				bestmove = state.move;
+				
 			}
-			if (st.alpha>=st.beta){
+			if (st.alpha>st.beta){
 				break;
 			}
 			
@@ -69,20 +86,29 @@ public class AlphaBetaTree {
 			return st;
 		}
 		
-		List<Move> moves = st.board.allPossibleMoves();
-		
-		Move bestmove = null;
+		List<Move> moves;
+		if (st.parent!=null && st.parent.parent != null && st.parent.parent.parent!=null && st.parent.parent.parent.parent!=null ){
+
+			moves = st.board.allPossibleMoves(st.parent.parent.parent.parent.move);
+		}
+		else{
+			moves = st.board.allPossibleMoves();
+		}
+		Move bestmove = st.move;
 		int best = st.beta;
 		for (Move move: moves){
 			if( move.toMove.type!= UnitType.DRAGON){
 				continue;
 			}
-			ABState state = new ABState(move, st.board.deepCloneAndMove(move), st.alpha, st.beta);
+			ABState state = new ABState(move, st.board.deepCloneAndMove(move), st.alpha, st.beta, st);
 			count++;
-			state = Alpha(state, depth+1);
+			Alpha(state, depth+1);
+			if (st == root)
+				System.out.println(state.utility);
+
 			if (state.utility<best){
 				best = state.utility;
-				st.beta= state.utility;
+				st.alpha= state.utility;
 				bestmove = state.move;
 
 			}

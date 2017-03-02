@@ -10,10 +10,16 @@ public class ABState {
 	 * @param move The move
 	 * @param board The board
 	 */
-	public ABState(Move move, Board board, int alpha, int beta) {
+	public ABState(Move move, Board board, int alpha, int beta, ABState parent) {
 		this.move = move;
 		this.board = board;
-		utility = board.EvaluateBoard();
+		this.parent = parent;
+		if (parent!=null && parent.parent != null && parent.parent.parent!=null && parent.parent.parent.parent!=null ){
+			utility = board.EvaluateBoard(parent.parent.parent.parent.move, this.move);
+		}
+		else{
+			utility = board.EvaluateBoard();
+		}
 		this.alpha = alpha;
 		this.beta = beta;
 	}
@@ -30,4 +36,6 @@ public class ABState {
 	
 	/** The list of child states of the board */
 	public List<State> childStates;
+	
+	public ABState parent;
 }

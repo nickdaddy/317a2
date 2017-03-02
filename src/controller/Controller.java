@@ -14,11 +14,16 @@ import model.Unit.UnitType;
  */
 public class Controller {
 
+	/** King is a player (not AI) **/
+	public boolean kingPlayer = false;
+	/** Dragon is a player (not AI) **/
+	public boolean dragonPlayer = false;
+	
 	/** The board of the game to manipulate */
 	public Board board;
 	
 	/** The maximum depth to explore in the tree */
-	public static int maxDepth = 9;
+	public static int maxDepth = 5;
 	
 	/**
 	 * Starts the game by creating a new board and deciding which team goes first.
@@ -41,6 +46,13 @@ public class Controller {
 		
 		while(!gameOver){
 			
+			System.out.println("Turn #" + turnCounter);
+			if (board.kingsTurn) {
+				System.out.println("King's turn.");
+			}
+			else {
+				System.out.println("Dragon's turn");
+			}
 			board.UpdateBoard();
 			DisplayBoard();
 			
@@ -56,46 +68,61 @@ public class Controller {
 				}
 			}
 			
-			if(!kingCanMove)
+			// If player can't move, it is a stalemate.
+			if(possibleMoves.isEmpty()) {
 				EndGame();
-			
-			String command = scanner.nextLine();
-			
-			
-			int startX = -1;
-			int startY = -1;
-			int endX = -1;
-			int endY = -1;
-			
-			if (command.length() >= 4) {
-				startX = convertToNum(command.charAt(0));
-				startY = convertToNum(command.charAt(1));
-				endX = convertToNum(command.charAt(2));
-				endY = convertToNum(command.charAt(3));
+				break;
 			}
 			
-			for (Move move: possibleMoves){
-				if( startX == move.toMove.x && startY == move.toMove.y && endX == move.x && endY == move.y){
-					board.Move(move);
-					break;
+			// If player's turn.
+			if (board.kingsTurn && kingPlayer || !board.kingsTurn && dragonPlayer) {
+				String command = scanner.nextLine();
+
+
+				int startX = -1;
+				int startY = -1;
+				int endX = -1;
+				int endY = -1;
+
+				if (command.length() >= 4) {
+					startX = convertToNum(command.charAt(0));
+					startY = convertToNum(command.charAt(1));
+					endX = convertToNum(command.charAt(2));
+					endY = convertToNum(command.charAt(3));
+				}
+
+				for (Move move: possibleMoves){
+					if( startX == move.toMove.x && startY == move.toMove.y && endX == move.x && endY == move.y){
+						board.Move(move);
+						turnCounter++;
+						break;
+					}
 				}
 			}
-			
-			board.UpdateBoard();
-			//DisplayBoard();
-			
-			if(board.isWinningState()){
-				EndGame();
+			// else use AI.
+			else {
+				//Move aiMove = new MinMaxTree(board, Controller.maxDepth).EvaluateTree(board.kingsTurn).move;
+				AlphaBetaTree tree = new AlphaBetaTree(board, Controller.maxDepth, board.kingsTurn);
+				Move aiMove = tree.root.move;
+				System.out.println("MinMax looked at: "+ tree.count + " Nodes" +" Score picked was: " +tree.root.utility);
+
+				board.Move(aiMove);
+				turnCounter++;
+				//board.UpdateBoard();
+				//DisplayBoard();
 			}
 			
-			System.out.println("Turn #" + turnCounter);
-			//Move aiMove = new MinMaxTree(board, Controller.maxDepth).EvaluateTree(board.kingsTurn).move;
-			AlphaBetaTree tree = new AlphaBetaTree(board, Controller.maxDepth, board.kingsTurn);
-			Move aiMove = tree.root.move;
-			System.out.println("MinMax looked at: "+ tree.count + " Nodes");
+			if(board.isWinningState()){
+				if (!board.kingsTurn) {
+					System.out.println("KING WINS!");
+				}
+				else {
+					System.out.println("DRAGONS WIN!");
+				}
+				EndGame();
+				gameOver = true;
+			}
 			
-			board.Move(aiMove);
-			turnCounter++;
 		}
 		
 		scanner.close();
