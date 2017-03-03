@@ -1,0 +1,16 @@
+Abstract Game definitions:
+
+Game.java
+GameState.java
+- define a basic game 
+BigGame.java
+- an extension of Game that specifies the interface 
+  to the method to Estimate the value of the gamestate
+  (for games that can't be searched to full depth)
+- Kept separate so that the modification is separate 
+  from the code distributed
+
+GameTreeSearch.java
+Minimax.java
+
+
