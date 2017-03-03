@@ -42,22 +42,18 @@ public class AlphaBetaTree {
 		Move bestmove =st.move;
 		int best = st.alpha;
 		for (Move move: moves){
-			if( move.toMove.type== UnitType.DRAGON){
+			if( move.toMove.type == UnitType.DRAGON){
 				continue;
 			}
 			count++;
 			
-		
 			ABState state = new ABState(move, st.board.deepCloneAndMove(move), st.alpha, st.beta, st);
 			
 			Beta(state, depth+1);
 			if (st == root)
 				System.out.println(state.utility);
-
-		
 			
 			if (state.utility>best){
-			
 			
 				best = state.utility;
 				st.beta = state.utility;
@@ -94,10 +90,11 @@ public class AlphaBetaTree {
 		else{
 			moves = st.board.allPossibleMoves();
 		}
+		
 		Move bestmove = st.move;
 		int best = st.beta;
 		for (Move move: moves){
-			if( move.toMove.type!= UnitType.DRAGON){
+			if( move.toMove.type != UnitType.DRAGON){
 				continue;
 			}
 			ABState state = new ABState(move, st.board.deepCloneAndMove(move), st.alpha, st.beta, st);
@@ -108,7 +105,7 @@ public class AlphaBetaTree {
 
 			if (state.utility<best){
 				best = state.utility;
-				st.alpha= state.utility;
+				st.alpha = state.utility;
 				bestmove = state.move;
 
 			}

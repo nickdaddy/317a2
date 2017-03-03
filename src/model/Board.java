@@ -362,7 +362,7 @@ public class Board {
 				case KING: 
 					score +=c;
 					score += unit.x; // Higher score when closer to bottom
-					if (unit.x == 4) {
+					if (unit.x == getSize() - 1) {
 						score += 50; // High score for king reaching bottom row.
 					}
 					// Since the game ends before the king is removed, we check if the king is able to be captured.
@@ -402,7 +402,7 @@ public class Board {
 							
 				case KING: 
 					score +=c;
-					score += unit.x; // Higher score when closer to bottom
+					score += unit.x*2; // Higher score when closer to bottom
 					if (unit.x == 4) {
 						score += 50; // High score for king reaching bottom row.
 					}
@@ -446,28 +446,32 @@ public class Board {
 					if ((other.x == unit.x-1 && other.y == unit.y) || (other.x == unit.x+1 && other.y == unit.y)){
 						adjacentscore++;
 					}
-					/**Horizontal check 2 spaces away**/
+					/**
+			
 					if ((other.y == unit.y-2 && other.x == unit.x) || (other.y == unit.y+2 && other.x == unit.x)){
 						adjacentscore += 3;
 					}
-					/** Vertical check 2 spaces away**/
+					
 					if ((other.x == unit.x-2 && other.y == unit.y) || (other.x == unit.x+2 && other.y == unit.y)){
 						adjacentscore += 3;
 					}
+					**/
 				}
 				else if (other.type == UnitType.KING) {
 					/** check all around including diagonal**/
 					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
 						adjacentscore++;
 					}
-					/**Horizontal check 2 spaces away**/
+					/**
+		
 					if ((other.y == unit.y-2 && other.x == unit.x) || (other.y == unit.y+2 && other.x == unit.x)){
 						adjacentscore += 3;
 					}
-					/** Vertical check 2 spaces away**/
+			
 					if ((other.x == unit.x-2 && other.y == unit.y) || (other.x == unit.x+2 && other.y == unit.y)){
 						adjacentscore += 3 ;
 					}
+					**/
 					
 				}
 				/** close to a dragon**/
