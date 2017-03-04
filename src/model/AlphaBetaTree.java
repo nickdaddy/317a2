@@ -34,8 +34,7 @@ public class AlphaBetaTree {
 		if(st.board.isWinningState() || depth>=maxDepth){
 			
 			// Makes the king choose the earliest depth move when there is a tie in utility values.
-			st.utility -= minMaxDepth;
-			
+			st.utility -= depth * 2;
 			return st;
 		}
 		
@@ -50,7 +49,6 @@ public class AlphaBetaTree {
 			moves = st.board.allPossibleMoves();
 		}
 		
-
 		
 		//Initialize best move and current best utility
 		Move bestmove =st.move;
@@ -92,10 +90,11 @@ public class AlphaBetaTree {
 			//Recursively calls Beta to go to the next level on state
 			state = Beta(state, depth+1);
 			
-			
-			if (st == root)
+			/*
+			if (st == root) {
 				System.out.println(state.utility);
-			
+			}
+			*/
 			
 			//If we've found a state with better utility, update the current best
 			if (state.utility > best){
@@ -128,6 +127,7 @@ public class AlphaBetaTree {
 	
 	public ABState Beta(ABState st, int depth){
 		if(st.board.isWinningState() || depth>=maxDepth){
+			//st.utility += depth * 3;
 			return st;
 		}
 		
@@ -171,9 +171,12 @@ public class AlphaBetaTree {
 			
 			state = Alpha(state, depth+1);
 			
-			if (st == root)
+			/*
+			if (st == root) {
 				System.out.println(state.utility);
-
+			}
+			*/
+				
 			if (state.utility<best){
 				best = state.utility;
 				st.beta = state.utility;

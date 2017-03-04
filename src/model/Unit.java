@@ -10,9 +10,15 @@ public abstract class Unit {
 
 	/** The x and y coordinate of the unit */
 	public int x, y;
-	
+	public int ID;
 	/** The type of the unit */
 	public UnitType type;
+	
+	/** The board the unit is on */
+	public Board board;
+	
+	/** The flag deciding whether the unit can be captured or not */
+	public boolean canBeCaptured = false;
 	
 	/**
 	 * The list of possible moves the piece can make at the current time
@@ -32,4 +38,13 @@ public abstract class Unit {
 		/** The dragon piece */
 		DRAGON
 	}
+	
+	/**
+	 * This takes a move and returns whether the move is valid or not.
+	 * @param move The move to decide is valid or not
+	 * @return Whether the move was valid or not
+	 */
+	public abstract boolean isValidMove(Move move);
+	
+	public abstract boolean isSurrounded();
 }

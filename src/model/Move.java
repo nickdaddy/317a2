@@ -23,4 +23,5 @@ public class Move {
 		x = xDest;
 		y = yDest;
 	}
+	
 }
