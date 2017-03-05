@@ -14,12 +14,12 @@ public class ABState {
 		this.move = move;
 		this.board = board;
 		this.parent = parent;
-		if (parent!=null && parent.parent != null && parent.parent.parent!=null && parent.parent.parent.parent!=null ){
-			utility = board.EvaluateBoard(parent.parent.parent.parent.move, this.move);
-		}
-		else{
+		//if (parent!=null && parent.parent != null && parent.parent.parent!=null && parent.parent.parent.parent!=null ){
+		//	utility = board.EvaluateBoard(parent.parent.parent.parent.move, this.move);
+		//}
+		//else{
 			utility = board.EvaluateBoard();
-		}
+		//}
 		this.alpha = alpha;
 		this.beta = beta;
 	}

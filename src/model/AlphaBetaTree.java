@@ -34,20 +34,15 @@ public class AlphaBetaTree {
 		if(st.board.isWinningState() || depth>=maxDepth){
 			
 			// Makes the king choose the earliest depth move when there is a tie in utility values.
-			st.utility -= depth * 2;
+			st.utility += depth * 10;
 			return st;
 		}
 		
 		//Create a list of all possible moves
 		//Repetition check 
 		List<Move> moves;
-		if (st.parent!=null && st.parent.parent != null && st.parent.parent.parent!=null && st.parent.parent.parent.parent!=null ){
-
-			moves = st.board.allPossibleMoves(st.parent.parent.parent.parent.move);
-		}
-		else{
-			moves = st.board.allPossibleMoves();
-		}
+		
+		moves = st.board.allPossibleMoves();
 		
 		
 		//Initialize best move and current best utility
@@ -57,6 +52,8 @@ public class AlphaBetaTree {
 		//For each move
 		for (Move move: moves){
 			
+			
+			
 			// Skip branch where the next move from the root is a repeated move.
 			if(Controller.moveList.size() > 4 ){
 				
@@ -65,10 +62,29 @@ public class AlphaBetaTree {
 				// Check if root and move unit ID are the same.
 				if(st == root && oldMoveID == newMoveID){
 					// Check for same source.
-					if (Controller.moveList.get(Controller.turnCounter - 5).toMove.x == move.toMove.x && Controller.moveList.get(Controller.turnCounter - 5).toMove.y == move.toMove.y) {
+					Move twoMovesAgo = Controller.moveList.get(Controller.turnCounter - 5);
+					
+					if (twoMovesAgo.x == move.toMove.x && twoMovesAgo.y == move.toMove.y) {
 						// Check for same destination.
-						if (Controller.moveList.get(Controller.turnCounter - 5).x == move.x && Controller.moveList.get(Controller.turnCounter - 5).y == move.y) {
+						if (twoMovesAgo.x == move.x && twoMovesAgo.y == move.y) {
 							continue;
+						}
+					}
+				}
+				
+				if(Controller.moveList.size() > 8 ){
+				
+					oldMoveID = Controller.moveList.get(Controller.turnCounter - 9).toMove.ID;
+				
+					if(st == root && oldMoveID == newMoveID){
+						
+						Move fourMovesAgo = Controller.moveList.get(Controller.turnCounter - 9);
+						
+						if (fourMovesAgo.x == move.toMove.x && fourMovesAgo.y == move.toMove.y) {
+							// Check for same destination.
+							if (fourMovesAgo.x == move.x && fourMovesAgo.y == move.y) {
+								continue;
+							}
 						}
 					}
 				}
@@ -90,12 +106,7 @@ public class AlphaBetaTree {
 			//Recursively calls Beta to go to the next level on state
 			state = Beta(state, depth+1);
 			
-			/*
-			if (st == root) {
-				System.out.println(state.utility);
-			}
-			*/
-			
+
 			//If we've found a state with better utility, update the current best
 			if (state.utility > best){
 			
@@ -126,19 +137,16 @@ public class AlphaBetaTree {
 	}
 	
 	public ABState Beta(ABState st, int depth){
+		
 		if(st.board.isWinningState() || depth>=maxDepth){
-			//st.utility += depth * 3;
+			// Makes the king choose the earliest depth move when there is a tie in utility values.
+			st.utility -= depth * 10;
 			return st;
 		}
 		
 		List<Move> moves;
-		if (st.parent!=null && st.parent.parent != null && st.parent.parent.parent!=null && st.parent.parent.parent.parent!=null ){
-
-			moves = st.board.allPossibleMoves(st.parent.parent.parent.parent.move);
-		}
-		else{
-			moves = st.board.allPossibleMoves();
-		}
+		
+		moves = st.board.allPossibleMoves();
 		
 		Move bestmove = st.move;
 		int best = st.beta;
@@ -159,6 +167,23 @@ public class AlphaBetaTree {
 						}
 					}
 				}
+				
+				if(Controller.moveList.size() > 8 ){
+					
+					oldMoveID = Controller.moveList.get(Controller.turnCounter - 9).toMove.ID;
+				
+					if(st == root && oldMoveID == newMoveID){
+						
+						Move fourMovesAgo = Controller.moveList.get(Controller.turnCounter - 9);
+						
+						if (fourMovesAgo.x == move.toMove.x && fourMovesAgo.y == move.toMove.y) {
+							// Check for same destination.
+							if (fourMovesAgo.x == move.x && fourMovesAgo.y == move.y) {
+								continue;
+							}
+						}
+					}
+				}
 			}
 			
 			if( move.toMove.type != UnitType.DRAGON){
@@ -171,25 +196,20 @@ public class AlphaBetaTree {
 			
 			state = Alpha(state, depth+1);
 			
-			/*
-			if (st == root) {
-				System.out.println(state.utility);
-			}
-			*/
-				
-			if (state.utility<best){
+			if (state.utility < best){
 				best = state.utility;
 				st.beta = state.utility;
 				bestmove = state.move;
 
 			}
 			
-			if (st.alpha>=st.beta){
+			if (st.alpha >= st.beta){
 				break;
 			}
 			
 			
 		}
+		
 		if (st == root){
 			st.move = bestmove;
 		}

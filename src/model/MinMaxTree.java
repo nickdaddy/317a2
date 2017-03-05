@@ -3,6 +3,7 @@ package model;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import controller.Controller;
 import model.Unit.UnitType;
@@ -68,11 +69,15 @@ public class MinMaxTree {
 		
 		root = new State(null, board);
 		
+		long start = System.currentTimeMillis();
 		firstLevel = this.generateChildStates(board);
 		
 		root.childStates = firstLevel;
 		
+		long stop = System.currentTimeMillis();
 		System.out.println("Level 0 contains " + firstLevel.size() + " states.");
+		System.out.println("Level 0 took " + (stop - start) + " ms to build");
+		
 		
 		List<State> currentLevel = new LinkedList<State>();
 		List<State> nextLevel = new LinkedList<State>();
@@ -80,6 +85,8 @@ public class MinMaxTree {
 		currentLevel.addAll(firstLevel);
 		
 		for(int x = 1; x < depth; x++){
+			start = System.currentTimeMillis();
+			
 			for (State curState : currentLevel){
 				curState.childStates = generateChildStates(curState, x);
 				nextLevel.addAll(curState.childStates);
@@ -91,6 +98,10 @@ public class MinMaxTree {
 			currentLevel.clear();
 			currentLevel.addAll(nextLevel);
 			nextLevel.clear();
+			
+			stop = System.currentTimeMillis();
+			
+			System.out.println("Level " + x + " took " + (stop - start) + " ms to build");
 		}
 	}
 	
@@ -164,7 +175,7 @@ public class MinMaxTree {
 		board.Initialize();
 		board.DisplayBoard();
 		
-		MinMaxTree tree = new MinMaxTree(board, Controller.maxDepth);
+		MinMaxTree tree = new MinMaxTree(board, 5);
 		
 		State state = tree.EvaluateTree(board.kingsTurn);
 		System.out.println(state.utility);

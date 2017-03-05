@@ -352,32 +352,69 @@ public class Board {
 	 */
 	public int EvaluateBoard(){
 		int score = 0;
-		int c = 4;
+		int c = 0;
+		
+		int totalDragons = 0;
 		for(Unit unit: units){
 			switch(unit.type){
 				case GUARD:	
+					
+					for(Unit onUnit: units){
+						if(onUnit.ID != unit.ID)
+						if(unit.x == onUnit.x && unit.y == onUnit.y){
+							score += 100;
+							break;
+						}
+					}
+					
 					score += c; //+ unit.x;
+					score += unit.x;
 					break;
 							
 				case KING: 
 					score +=c;
-					score += unit.x*2; // Higher score when closer to bottom
-					if (unit.x == getSize() - 1) {
-						score += 50; // High score for king reaching bottom row.
+					//score += unit.x*10; // Higher score when closer to bottom
+					
+					int numDragons = 0;
+					for(Unit drag: units){
+						if(drag.type == UnitType.DRAGON){
+							numDragons++;
+						}
+						
+						if(unit.x == drag.x && unit.y == drag.y){
+							score += 20;
+						}
 					}
+					
+					if(numDragons < 3)
+						score += unit.x*20; // Higher score when closer to bottom
+					else
+						score += unit.x*10; // Higher score when closer to bottom
+					
+					
+					if (unit.x == getSize() - 1 && !kingsTurn) {
+						score += 1000; // High score for king reaching bottom row.
+					}
+					
 					// Since the game ends before the king is removed, we check if the king is able to be captured.
 					if (unit.isSurrounded() && unit.PossibleMoves().size() == 0) {
-						score -= 50;
+						score -= 1000;
 					}
 					break;
 
 				case DRAGON: 
-					score -= c+2;
-					//score -= unit.x;
+					totalDragons++;
+					score -= c;
 					break;
 			}
-			//score += CheckAdjacent(unit);
+			
+			score += (5 - totalDragons) * 50;
+			
+			score += CheckAdjacent(unit);
 		}
+		
+		int pieceDifference = units.size() - (totalDragons * 2);
+		score += pieceDifference * 100;
 		return score;
 	}
 	
@@ -394,21 +431,45 @@ public class Board {
 			}
 		}**/
 		
+		
+		
 		for(Unit unit: units){
 			switch(unit.type){
 				case GUARD:	
+					for(Unit onUnit: units){
+						if(unit.x == onUnit.x && unit.y == onUnit.y){
+							score += 20;
+						}
+					}
 					score += c; //+ unit.x;
+					score += unit.x * 3; // Higher score when closer to bottom
 					break;
 							
 				case KING: 
 					score +=c;
-					score += unit.x*5; // Higher score when closer to bottom
+					
+					int numDragons = 0;
+					for(Unit drag: units){
+						if(drag.type == UnitType.DRAGON){
+							numDragons++;
+						}
+						
+						if(unit.x == drag.x && unit.y == drag.y){
+							score += 20;
+						}
+					}
+					
+					if(numDragons < 3)
+						score += unit.x*20; // Higher score when closer to bottom
+					else
+						score += unit.x*10; // Higher score when closer to bottom
+					
 					if (unit.x == 4) {
-						score += 100; // High score for king reaching bottom row.
+						score += 1000; // High score for king reaching bottom row.
 					}
 					// Since the game ends before the king is removed, we check if the king is able to be captured.
 					if (unit.isSurrounded() && unit.PossibleMoves().size() == 0) {
-						score -= 100;
+						score -= 1000;
 					}
 					break;
 
@@ -430,6 +491,7 @@ public class Board {
 	 */
 	public int CheckAdjacent(Unit unit){
 		int adjacentscore = 0;
+		int dragonCount = 0;
 		
 		if (unit.type == UnitType.GUARD || unit.type == UnitType.KING){
 			for (Unit other : units){
@@ -440,29 +502,29 @@ public class Board {
 					/** At this point im not sure if only horizontal checks are required. Is it even good to have a vertical check in the game? Maybe just for the king?**/
 					/**Horizontal check**/
 					if ((other.y == unit.y-1 && other.x == unit.x) || (other.y == unit.y+1 && other.x == unit.x)){
-						adjacentscore++;
+						adjacentscore += 2;
 					}
 					/** Vertical check **/
 					if ((other.x == unit.x-1 && other.y == unit.y) || (other.x == unit.x+1 && other.y == unit.y)){
-						adjacentscore++;
+						adjacentscore += 2;
 					}
 					
 			
 					if ((other.y == unit.y-2 && other.x == unit.x) || (other.y == unit.y+2 && other.x == unit.x)){
-						adjacentscore += 2;
+						adjacentscore += 1;
 					}
 					
 					if ((other.x == unit.x-2 && other.y == unit.y) || (other.x == unit.x+2 && other.y == unit.y)){
-						adjacentscore += 2;
+						adjacentscore += 1;
 					}
 					
 				}
 				else if (other.type == UnitType.KING) {
 					/** check all around including diagonal**/
-					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore++;
+					if (Math.abs(other.x-unit.x)<=1 || Math.abs(other.y-unit.y)<=1){
+						adjacentscore += 2;
 					}
-					
+					/*
 		
 					if ((other.y == unit.y-2 && other.x == unit.x) || (other.y == unit.y+2 && other.x == unit.x)){
 						adjacentscore += 1;
@@ -471,13 +533,18 @@ public class Board {
 					if ((other.x == unit.x-2 && other.y == unit.y) || (other.x == unit.x+2 && other.y == unit.y)){
 						adjacentscore += 1 ;
 					}
-					
+					*/
 					
 				}
-				/** close to a dragon**/
 				else {
-					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore--;
+					dragonCount++;
+					
+					if (Math.abs(other.x-unit.x)<=1 || Math.abs(other.y-unit.y)<=1){
+						adjacentscore -= 10;
+					}
+					
+					if(dragonCount >= 3){
+						adjacentscore = adjacentscore - 20;
 					}
 				}	
 			}
@@ -491,12 +558,12 @@ public class Board {
 				else if(other.type == UnitType.DRAGON){
 					/** check all around including diagonal**/
 					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore++;
+						adjacentscore += 1;
 					}
 				}
 				else{
-					if (Math.abs(other.x-unit.x)<=1 && Math.abs(other.y-unit.y)<=1){
-						adjacentscore--;
+					if (Math.abs(other.x+unit.x)<=1 && Math.abs(other.y+unit.y)<=1){
+						adjacentscore -= 1;
 					}
 				}
 				

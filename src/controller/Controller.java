@@ -20,11 +20,14 @@ public class Controller {
 	/** Dragon is a player (not AI) **/
 	public boolean dragonPlayer = false;
 	
+	/** Display the possible moves each player can make on a turn? */
+	public static boolean displayPossibleMoves = false;
+	
 	/** The board of the game to manipulate */
 	public Board board;
 	
 	/** The maximum depth to explore in the tree */
-	public static int maxDepth = 7;
+	public static int maxDepth = 3;
 	
 	/** The turn counter for board game. **/
 	public static int turnCounter = 1;
@@ -50,7 +53,12 @@ public class Controller {
 		
 		List<Move> possibleMoves = new LinkedList<Move>();
 		
+		long start;
+		long stop;
+		
 		while(!gameOver){
+			
+			
 			
 			System.out.println("Turn #" + turnCounter);
 			if (board.kingsTurn) {
@@ -67,8 +75,10 @@ public class Controller {
 			boolean kingCanMove = false;
 			
 			for(Move move : possibleMoves){
-				System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
-						" can move to: " + convertToChar(move.x) + (move.y + 1));
+				if(displayPossibleMoves)
+					System.out.println(move.toMove.toString() + " at " + convertToChar(move.toMove.x) + (move.toMove.y + 1) + 
+							" can move to: " + convertToChar(move.x) + (move.y + 1));
+				
 				if(move.toMove.type == UnitType.KING){
 					kingCanMove = true;
 				}
@@ -108,6 +118,7 @@ public class Controller {
 			}
 			// else use AI.
 			else {
+				start = System.currentTimeMillis();
 				//Move aiMove = new MinMaxTree(board, Controller.maxDepth).EvaluateTree(board.kingsTurn).move;
 				AlphaBetaTree tree = new AlphaBetaTree(board, Controller.maxDepth, board.kingsTurn);
 				Move aiMove = tree.root.move;
@@ -115,8 +126,8 @@ public class Controller {
 				board.Move(aiMove);
 				moveList.add(aiMove);
 				turnCounter++;
-				//board.UpdateBoard();
-				//DisplayBoard();
+				stop = System.currentTimeMillis();
+				System.out.println("Time taken for move was " + (stop - start) + " ms");
 			}
 			
 			if(board.isWinningState()){
@@ -130,6 +141,7 @@ public class Controller {
 				gameOver = true;
 			}
 			
+			
 		}
 		
 		scanner.close();
@@ -139,6 +151,7 @@ public class Controller {
 	 * Ends the game by announcing the winner and starting a new game.
 	 */
 	public void EndGame(){
+		DisplayBoard();
 		System.out.println("GAME OVER");
 	}
 	
