@@ -288,9 +288,16 @@ public class Board {
 			}
 			
 			if(unit.type == UnitType.KING){
+				King king = (King) unit;
+
 				if(unit.x == getSize() - 1){
 					return true;
 				} else if (unit.isSurrounded() && unit.PossibleMoves().size() == 0){
+					return true;
+				}
+				else if (unit.isSurrounded()&& king.guardCheck()){
+					/**If you wanna see the board representation uncomment this**/
+					//this.DisplayBoard();
 					return true;
 				}
 				

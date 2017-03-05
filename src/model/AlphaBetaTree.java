@@ -47,7 +47,7 @@ public class AlphaBetaTree {
 		
 		//Initialize best move and current best utility
 		Move bestmove =st.move;
-		int best = st.alpha;
+		int best = Integer.MIN_VALUE;
 		
 		//For each move
 		for (Move move: moves){
@@ -111,7 +111,11 @@ public class AlphaBetaTree {
 			if (state.utility > best){
 			
 				best = state.utility;
-				st.alpha = state.utility;
+				
+				if (st.alpha > best){
+					st.alpha = state.utility;
+				}
+				
 				bestmove = state.move;
 				
 			}
@@ -149,7 +153,7 @@ public class AlphaBetaTree {
 		moves = st.board.allPossibleMoves();
 		
 		Move bestmove = st.move;
-		int best = st.beta;
+		int best = Integer.MAX_VALUE;
 		for (Move move: moves){
 			
 			// Skip branch where the next move from the root is a repeated move.
@@ -198,7 +202,10 @@ public class AlphaBetaTree {
 			
 			if (state.utility < best){
 				best = state.utility;
-				st.beta = state.utility;
+				
+				if (st.beta < best){
+					st.beta = state.utility;
+				}
 				bestmove = state.move;
 
 			}

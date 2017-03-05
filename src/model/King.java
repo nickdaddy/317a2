@@ -100,6 +100,40 @@ public class King extends Unit{
 		return (board.grid[x][y] == 'G');
 	}
 	
+	/** iswinnable state does not detect when surrounded by 3 dragons and a guard
+	 * this is simple fix**/
+	public boolean guardCheck(){
+		boolean guardAround = false;
+		
+		if(board.inBounds(x, y + 1)){
+			if(board.grid[x][y + 1] == 'G'){
+				guardAround = true;
+			}
+		}
+
+		else if(board.inBounds(x, y - 1)){
+			if(board.grid[x][y - 1] == 'G'){
+				guardAround = true;
+			}
+		}
+
+		else if(board.inBounds(x + 1, y)){
+			if(board.grid[x + 1][y] == 'G'){
+				guardAround = true;
+			}
+		}
+		
+		else if(board.inBounds(x - 1, y)){
+			if(board.grid[x - 1][y] == 'G'){
+				guardAround = true;
+			}
+		}
+			
+		
+		
+		return guardAround;
+	}
+	
 	@Override
 	public boolean isSurrounded(){
 		
