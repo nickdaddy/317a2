@@ -27,7 +27,7 @@ public class Controller {
 	public Board board;
 	
 	/** The maximum depth to explore in the tree */
-	public static int maxDepth = 4;
+	public static int maxDepth = 5;
 	
 	/** The turn counter for board game. **/
 	public static int turnCounter = 1;

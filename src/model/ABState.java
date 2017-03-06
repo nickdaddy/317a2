@@ -18,7 +18,7 @@ public class ABState {
 		//	utility = board.EvaluateBoard(parent.parent.parent.parent.move, this.move);
 		//}
 		//else{
-			utility = board.EvaluateBoard();
+		utility = board.EvaluateBoard();
 		//}
 		this.alpha = alpha;
 		this.beta = beta;

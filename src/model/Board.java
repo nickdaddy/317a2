@@ -407,11 +407,14 @@ public class Board {
 					if (unit.isSurrounded() && unit.PossibleMoves().size() == 0) {
 						score -= 1000;
 					}
+					else if (unit.isSurrounded()&& ((King) unit).guardCheck()){
+						score -= 1000;
+					}
 					break;
 
 				case DRAGON: 
 					totalDragons++;
-					score -= c;
+					score -= c+2;
 					break;
 			}
 			
@@ -437,8 +440,6 @@ public class Board {
 				score-=10;
 			}
 		}**/
-		
-		
 		
 		for(Unit unit: units){
 			switch(unit.type){
@@ -476,6 +477,9 @@ public class Board {
 					}
 					// Since the game ends before the king is removed, we check if the king is able to be captured.
 					if (unit.isSurrounded() && unit.PossibleMoves().size() == 0) {
+						score -= 1000;
+					}
+					else if (unit.isSurrounded()&& ((King) unit).guardCheck()){
 						score -= 1000;
 					}
 					break;
