@@ -119,7 +119,7 @@ public class Controller {
 			// else use AI.
 			else {
 				start = System.currentTimeMillis();
-				//Move aiMove = new MinMaxTree(board, Controller.maxDepth).EvaluateTree(board.kingsTurn).move;
+				//Move aiMove = MinMaxTree(board, Controller.maxDepth).EvaluateTree(board.kingsTurn).move;
 				AlphaBetaTree tree = new AlphaBetaTree(board, Controller.maxDepth, board.kingsTurn);
 				Move aiMove = tree.root.move;
 				System.out.println("MinMax looked at: "+ tree.count + " Nodes." +" Score picked was: " +tree.root.utility);

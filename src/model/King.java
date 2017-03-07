@@ -111,19 +111,19 @@ public class King extends Unit{
 			}
 		}
 
-		else if(board.inBounds(x, y - 1)){
+		if(board.inBounds(x, y - 1)){
 			if(board.grid[x][y - 1] == 'G'){
 				guardAround = true;
 			}
 		}
 
-		else if(board.inBounds(x + 1, y)){
+		if(board.inBounds(x + 1, y)){
 			if(board.grid[x + 1][y] == 'G'){
 				guardAround = true;
 			}
 		}
 		
-		else if(board.inBounds(x - 1, y)){
+		if(board.inBounds(x - 1, y)){
 			if(board.grid[x - 1][y] == 'G'){
 				guardAround = true;
 			}
